@@ -1,4 +1,5 @@
 // Concept Note: https://docs.google.com/document/d/1-YNjDuJa0oJdkdDgccoqha6VtPCdRiNddwuVFUeQ9pE/edit?usp=drivesdk
+// GitHub Repo: https://github.com/Allan-Ngugi-Nganga/Mizizi
 
 // Group 1 - Mizizi: Keeping Kenyan languages usable for the next generation
 // Allan Ngugi - 191250
