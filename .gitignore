@@ -1,0 +1,18 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Kotlin
+.kotlin/
+*.class
+
+# Gradle / Android (used in later phases of the project)
+.gradle/
+build/
+local.properties
+*.apk
+captures/
+
+# OS junk
+.DS_Store
+Thumbs.db
