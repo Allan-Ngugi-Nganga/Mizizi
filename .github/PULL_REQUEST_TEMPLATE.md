@@ -4,7 +4,7 @@
 
 ## Target branch
 
-- [ ] `develop` (always — never `main` directly)
+- [ ] `develop` (always, never `main` directly)
 
 ## Kotlin concepts demonstrated
 

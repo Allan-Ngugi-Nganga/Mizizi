@@ -1,11 +1,11 @@
 # Contributing to Mizizi
 
-Short and sharp — read this before you touch the repo.
+Short and sharp: read this before you touch the repo.
 
 ## Before you start
 
 1. `git checkout develop`
-2. `git pull` — make sure you're up to date
+2. `git pull` to make sure you're up to date
 3. `git checkout -b feature/<what-you-are-building>`
    (e.g. `feature/proverb-practice`, `feature/archive`)
 
@@ -29,7 +29,7 @@ Short and sharp — read this before you touch the repo.
 - **Never force-push** a shared branch.
 - Pull `develop` before starting a feature to avoid conflicts.
 - If you see a merge conflict, do not "solve" it by deleting other people's
-  code — talk to the person who wrote it.
+  code. Talk to the person who wrote it.
 
 ## Definition of done
 
