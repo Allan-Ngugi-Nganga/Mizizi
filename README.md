@@ -6,6 +6,7 @@
   <a href="#current-status">Current Status</a> ·
   <a href="#repository-structure">Repository Structure</a> ·
   <a href="#branching-rules">Branching Rules</a> ·
+  <a href="#ci--checks">CI & Checks</a> ·
   <a href="#how-to-run-lab-1">How to Run</a> ·
   <a href="#team">Team</a> ·
   <a href="#concept-note">Concept Note</a>
@@ -59,6 +60,18 @@ Mizizi/
 Keep commits **small and frequent** (one commit = one logical change).
 Push at least once a day — frequent small commits make bugs easy to trace
 and let the whole team follow updates as they happen.
+
+## CI & Checks
+
+Every push and pull request to `main` / `develop` runs GitHub Actions:
+
+- **Compile** — `Main.kt` is built with the official Kotlin compiler.
+- **Smoke test** — the app runs through the archive, daily-proverb and exit
+  flows and the output is verified.
+
+`main` is protected: code lands only through a pull request with at least one
+approving review and a green build. No direct pushes, no force-pushes.
+See `.github/workflows/build.yml` and `.github/PULL_REQUEST_TEMPLATE.md`.
 
 ## How to run (Lab 1)
 
