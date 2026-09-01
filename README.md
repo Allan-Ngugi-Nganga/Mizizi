@@ -1,4 +1,4 @@
-# Mizizi 🌱
+# Mizizi
 
 **Keeping Kenyan languages usable for the next generation.**
 
@@ -11,9 +11,6 @@ meaning-based feedback on their attempts, instead of a blind literal translation
 - **Lab 1 (this repo phase):** a console-based Kotlin prototype of the core
   feature — a proverb practice engine with meaning-based grading, a session
   score, an archive of attempts, and a daily proverb.
-- **Endgame (later labs):** a native Android app (Kotlin + Jetpack Compose)
-  with an LLM-backed feedback engine, daily proverb notifications and a
-  personal proverb archive.
 
 ## Repository structure
 
@@ -45,7 +42,8 @@ Mizizi/
 - `chore:` — tooling, config, housekeeping
 
 Keep commits **small and frequent** (one commit = one logical change).
-Push at least once a day — it is your backup AND your teamwork evidence.
+Push at least once a day — frequent small commits make bugs easy to trace
+and let the whole team follow updates as they happen.
 
 ## How to run (Lab 1)
 

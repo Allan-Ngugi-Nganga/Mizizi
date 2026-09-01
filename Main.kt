@@ -1,6 +1,6 @@
-// Concept Note: https://docs.google.com/document/PASTE_YOUR_LINK_HERE
+// Concept Note: https://docs.google.com/document/d/1-YNjDuJa0oJdkdDgccoqha6VtPCdRiNddwuVFUeQ9pE/edit?usp=drivesdk
 
-// Group <N> - Mizizi: Keeping Kenyan languages usable for the next generation
+// Group 1 - Mizizi: Keeping Kenyan languages usable for the next generation
 // Allan Ngugi - 191250
 // Ziki Mtula - 192992
 // Michael Asingwire - 192483
