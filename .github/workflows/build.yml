@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build:
+    name: Compile & smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Kotlin compiler
+        uses: fwilhe2/setup-kotlin@1
+        with:
+          version: 2.1.20
+
+      - name: Compile Main.kt
+        run: kotlinc Main.kt -include-runtime -d mizizi.jar
+
+      - name: Smoke test (archive + daily proverb + exit)
+        run: printf '2\n3\n4\n' | java -jar mizizi.jar | grep -E "MY ARCHIVE|PROVERB OF THE DAY"
