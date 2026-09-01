@@ -1,10 +1,12 @@
 # IntelliJ IDEA
 .idea/
 *.iml
+out/
 
 # Kotlin
 .kotlin/
 *.class
+*.jar
 
 # Gradle / Android (used in later phases of the project)
 .gradle/
