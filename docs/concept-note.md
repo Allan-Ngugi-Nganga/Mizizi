@@ -1,6 +1,6 @@
 # Mizizi — Concept Note (Lab 1)
 
-> Google Docs version: https://docs.google.com/document/PASTE_YOUR_LINK_HERE
+> Google Docs version: https://docs.google.com/document/d/1-YNjDuJa0oJdkdDgccoqha6VtPCdRiNddwuVFUeQ9pE/edit?usp=drivesdk
 > (uploaded to Google Docs and shared with the lecturer — link also appears
 > as the first line of `Main.kt` as required)
 
