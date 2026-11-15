@@ -141,10 +141,10 @@ index b631eca..88fee0a 100644
  
 diff --git a/docs/release-checklist.md b/docs/release-checklist.md
 new file mode 100644
-index 0000000..2ea250b
+index 0000000..d456913
 --- /dev/null
 +++ b/docs/release-checklist.md
-@@ -0,0 +1,76 @@
+@@ -0,0 +1,89 @@
 +# Release checklist (v1.0)
 +
 +Run these in order on `develop` once every slice has merged.
@@ -205,10 +205,23 @@ index 0000000..2ea250b
 +## 5. Release it
 +
 +```bash
++git checkout develop
++git pull
++git checkout -b release/v1.0
++git push -u origin release/v1.0
++```
++
++`main` is protected by the `protect-main` ruleset: it needs a pull request plus one
++approving review, and direct pushes are rejected. So open a pull request from
++`release/v1.0` into `main`, get a teammate to approve it, and merge on GitHub.
++
++Then tag the merge commit:
++
++```bash
 +git checkout main
-+git merge --no-ff develop
++git pull
 +git tag -a v1.0 -m "Mizizi v1.0"
-+git push origin main --tags
++git push origin v1.0
 +```
 +
 +Then create the GitHub release on the `v1.0` tag, attach `app-release.apk`, and
