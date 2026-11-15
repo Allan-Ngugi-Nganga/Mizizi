@@ -47,6 +47,7 @@ meaning-based feedback on their attempts, instead of a blind literal translation
 ![Archive](docs/screenshots/archive.png)
 ![Proverb editor](docs/screenshots/editor.png)
 ![Proverb of the day](docs/screenshots/daily-proverb.png)
+![Daily reminder notification](docs/screenshots/notification.png)
 
 ## Download
 
@@ -110,9 +111,8 @@ and archive are still there.
   rebooting, and the system is allowed to delay a daily notification to save
   battery. It posts into a `daily_proverb` notification channel and asks for
   `POST_NOTIFICATIONS` on Android 13 and newer. The first reminder arrives soon
-  after the switch is turned on, then repeats daily.
-
-![Daily reminder notification](docs/screenshots/notification.png)
+  after the switch is turned on, then repeats daily. The last screenshot above
+  is the delivered notification.
 
 ## Repository structure
 
