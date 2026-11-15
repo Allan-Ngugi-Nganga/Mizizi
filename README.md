@@ -41,12 +41,12 @@ meaning-based feedback on their attempts, instead of a blind literal translation
 | Proverb editor | Create a proverb, edit one, delete one, with validation |
 | Proverb of the day | A daily proverb, its translation, and the daily reminder switch |
 
-![Home screen](docs/screenshots/01-home.png)
-![Practice](docs/screenshots/04-practice.png)
-![Result](docs/screenshots/05-result.png)
-![Archive](docs/screenshots/02-archive.png)
-![Proverb editor](docs/screenshots/06-editor.png)
-![Proverb of the day](docs/screenshots/03-daily-proverb.png)
+![Home screen](docs/screenshots/home.png)
+![Practice](docs/screenshots/practice.png)
+![Result](docs/screenshots/result.png)
+![Archive](docs/screenshots/archive.png)
+![Proverb editor](docs/screenshots/editor.png)
+![Proverb of the day](docs/screenshots/daily-proverb.png)
 
 ## Download
 
