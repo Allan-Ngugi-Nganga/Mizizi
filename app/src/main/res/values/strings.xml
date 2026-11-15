@@ -39,6 +39,18 @@
     <string name="result_back_home">Back to home</string>
     <string name="result_no_answer">You left this one blank.</string>
 
+    <string name="archive_your_answer">Your answer: %1$s</string>
+    <string name="archive_grade_and_date">%1$s, %2$s</string>
+    <string name="archive_delete">Delete</string>
+    <string name="archive_cancel">Cancel</string>
+    <string name="archive_clear_all">Clear the whole archive</string>
+    <string name="archive_empty_title">Nothing here yet</string>
+    <string name="archive_empty_body">Every attempt you make in a practice session is stored here.</string>
+    <string name="archive_delete_title">Delete this attempt?</string>
+    <string name="archive_delete_message">%1$s will be removed from your archive. This cannot be undone.</string>
+    <string name="archive_clear_title">Clear the archive?</string>
+    <string name="archive_clear_message">Every recorded attempt will be deleted. This cannot be undone.</string>
+
     <plurals name="home_proverb_count">
         <item quantity="one">%1$d proverb to practise</item>
         <item quantity="other">%1$d proverbs to practise</item>

@@ -50,7 +50,9 @@ class HomeFragment : Fragment() {
         binding.startPracticeButton.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_practiceFragment)
         }
-        binding.archiveButton.setOnClickListener { notYet("The archive") }
+        binding.archiveButton.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_archiveFragment)
+        }
         binding.dailyProverbButton.setOnClickListener { notYet("The daily proverb") }
     }
 

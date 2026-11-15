@@ -12,6 +12,10 @@
         <action
             android:id="@+id/action_homeFragment_to_practiceFragment"
             app:destination="@id/practiceFragment" />
+
+        <action
+            android:id="@+id/action_homeFragment_to_archiveFragment"
+            app:destination="@id/archiveFragment" />
     </fragment>
 
     <fragment
@@ -48,5 +52,10 @@
             android:name="sessionFinished"
             app:argType="boolean" />
     </fragment>
+
+    <fragment
+        android:id="@+id/archiveFragment"
+        android:name="com.example.mizizi.ui.archive.ArchiveFragment"
+        android:label="@string/title_archive" />
 
 </navigation>
