@@ -1,0 +1,463 @@
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+index cbef720..c399de9 100644
+--- a/app/src/main/AndroidManifest.xml
++++ b/app/src/main/AndroidManifest.xml
+@@ -3,6 +3,7 @@
+     xmlns:tools="http://schemas.android.com/tools">
+ 
+     <uses-permission android:name="android.permission.INTERNET" />
++    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+ 
+     <application
+         android:allowBackup="true"
+diff --git a/app/src/main/java/com/example/mizizi/data/local/ProverbDao.kt b/app/src/main/java/com/example/mizizi/data/local/ProverbDao.kt
+index bd88c0f..1c6dd8d 100644
+--- a/app/src/main/java/com/example/mizizi/data/local/ProverbDao.kt
++++ b/app/src/main/java/com/example/mizizi/data/local/ProverbDao.kt
+@@ -22,6 +22,10 @@ interface ProverbDao {
+     @Query("SELECT COUNT(*) FROM proverbs")
+     suspend fun count(): Int
+ 
++    /** One random proverb, used by the daily reminder job. */
++    @Query("SELECT * FROM proverbs ORDER BY RANDOM() LIMIT 1")
++    suspend fun random(): ProverbEntity?
++
+     @Insert(onConflict = OnConflictStrategy.ABORT)
+     suspend fun insert(proverb: ProverbEntity): Long
+ 
+diff --git a/app/src/main/java/com/example/mizizi/ui/daily/DailyProverbFragment.kt b/app/src/main/java/com/example/mizizi/ui/daily/DailyProverbFragment.kt
+new file mode 100644
+index 0000000..4cfa054
+--- /dev/null
++++ b/app/src/main/java/com/example/mizizi/ui/daily/DailyProverbFragment.kt
+@@ -0,0 +1,144 @@
++package com.example.mizizi.ui.daily
++
++import android.Manifest
++import android.content.pm.PackageManager
++import android.os.Build
++import android.os.Bundle
++import android.view.LayoutInflater
++import android.view.View
++import android.view.ViewGroup
++import androidx.activity.result.contract.ActivityResultContracts
++import androidx.core.content.ContextCompat
++import androidx.fragment.app.Fragment
++import androidx.fragment.app.activityViewModels
++import androidx.work.ExistingPeriodicWorkPolicy
++import androidx.work.PeriodicWorkRequestBuilder
++import androidx.work.WorkManager
++import com.example.mizizi.R
++import com.example.mizizi.data.model.ProverbEntity
++import com.example.mizizi.databinding.FragmentDailyProverbBinding
++import com.example.mizizi.ui.viewmodel.MiziziViewModel
++import com.example.mizizi.work.DailyProverbWorker
++import com.example.mizizi.work.Notifications
++import java.util.Calendar
++import java.util.concurrent.TimeUnit
++
++/**
++ * The proverb of the day, its machine translation, and the switch that puts the
++ * daily reminder into WorkManager.
++ */
++class DailyProverbFragment : Fragment() {
++
++    private var _binding: FragmentDailyProverbBinding? = null
++    private val binding get() = _binding!!
++
++    private val viewModel: MiziziViewModel by activityViewModels()
++
++    private var extras = 0
++
++    private val notificationPermission =
++        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
++            if (granted) scheduleReminder()
++        }
++
++    override fun onCreateView(
++        inflater: LayoutInflater,
++        container: ViewGroup?,
++        savedInstanceState: Bundle?
++    ): View {
++        _binding = FragmentDailyProverbBinding.inflate(inflater, container, false)
++        return binding.root
++    }
++
++    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
++        super.onViewCreated(view, savedInstanceState)
++
++        Notifications.ensureChannel(requireContext())
++
++        viewModel.proverbs.observe(viewLifecycleOwner) { proverbs ->
++            show(proverbs)
++        }
++
++        binding.anotherButton.setOnClickListener {
++            extras++
++            show(viewModel.proverbs.value.orEmpty())
++        }
++
++        binding.reminderButton.setOnClickListener { enableReminder() }
++
++        updateReminderStatus()
++    }
++
++    private fun show(proverbs: List<ProverbEntity>) {
++        if (proverbs.isEmpty()) {
++            binding.proverbText.text = getString(R.string.practice_no_proverbs)
++            binding.meaningText.text = ""
++            binding.machineText.text = ""
++            return
++        }
++
++        val dayIndex = Calendar.getInstance().get(Calendar.DAY_OF_YEAR) + extras
++        val index = ((dayIndex % proverbs.size) + proverbs.size) % proverbs.size
++        val proverb = proverbs[index]
++
++        binding.proverbText.text = proverb.original
++        binding.meaningText.text = proverb.meaning
++
++        binding.machineProgress.visibility = View.VISIBLE
++        binding.machineText.text = getString(R.string.practice_hint_loading)
++        viewModel.requestMachineTranslation(proverb.original) { text ->
++            if (_binding == null) return@requestMachineTranslation
++            binding.machineProgress.visibility = View.GONE
++            binding.machineText.text = getString(R.string.practice_hint_result, text)
++        }
++    }
++
++    private fun enableReminder() {
++        val needsPermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
++            ContextCompat.checkSelfPermission(
++                requireContext(),
++                Manifest.permission.POST_NOTIFICATIONS
++            ) != PackageManager.PERMISSION_GRANTED
++
++        if (needsPermission) {
++            notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
++        } else {
++            scheduleReminder()
++        }
++    }
++
++    private fun scheduleReminder() {
++        val request = PeriodicWorkRequestBuilder<DailyProverbWorker>(1, TimeUnit.DAYS)
++            .setInitialDelay(1, TimeUnit.HOURS)
++            .build()
++
++        WorkManager.getInstance(requireContext()).enqueueUniquePeriodicWork(
++            WORK_NAME,
++            ExistingPeriodicWorkPolicy.UPDATE,
++            request
++        )
++
++        updateReminderStatus()
++    }
++
++    private fun updateReminderStatus() {
++        WorkManager.getInstance(requireContext())
++            .getWorkInfosForUniqueWorkLiveData(WORK_NAME)
++            .observe(viewLifecycleOwner) { infos ->
++                val scheduled = infos.any { !it.state.isFinished }
++                binding.reminderStatusText.text = getString(
++                    if (scheduled) R.string.daily_reminder_on else R.string.daily_reminder_off
++                )
++                binding.reminderButton.isEnabled = !scheduled
++            }
++    }
++
++    override fun onDestroyView() {
++        super.onDestroyView()
++        _binding = null
++    }
++
++    private companion object {
++        const val WORK_NAME = "mizizi_daily_proverb"
++    }
++}
+diff --git a/app/src/main/java/com/example/mizizi/ui/home/HomeFragment.kt b/app/src/main/java/com/example/mizizi/ui/home/HomeFragment.kt
+index ec77ace..fe8244b 100644
+--- a/app/src/main/java/com/example/mizizi/ui/home/HomeFragment.kt
++++ b/app/src/main/java/com/example/mizizi/ui/home/HomeFragment.kt
+@@ -56,7 +56,9 @@ class HomeFragment : Fragment() {
+         binding.addProverbButton.setOnClickListener {
+             findNavController().navigate(R.id.action_homeFragment_to_proverbEditorFragment)
+         }
+-        binding.dailyProverbButton.setOnClickListener { notYet("The daily proverb") }
++        binding.dailyProverbButton.setOnClickListener {
++            findNavController().navigate(R.id.action_homeFragment_to_dailyProverbFragment)
++        }
+     }
+ 
+     /** Placeholder until each screen lands in its own slice. */
+diff --git a/app/src/main/java/com/example/mizizi/work/DailyProverbWorker.kt b/app/src/main/java/com/example/mizizi/work/DailyProverbWorker.kt
+new file mode 100644
+index 0000000..b0510d5
+--- /dev/null
++++ b/app/src/main/java/com/example/mizizi/work/DailyProverbWorker.kt
+@@ -0,0 +1,70 @@
++package com.example.mizizi.work
++
++import android.Manifest
++import android.app.PendingIntent
++import android.content.Context
++import android.content.Intent
++import android.content.pm.PackageManager
++import android.os.Build
++import androidx.core.app.NotificationCompat
++import androidx.core.app.NotificationManagerCompat
++import androidx.core.content.ContextCompat
++import androidx.work.CoroutineWorker
++import androidx.work.WorkerParameters
++import com.example.mizizi.MainActivity
++import com.example.mizizi.R
++import com.example.mizizi.data.local.MiziziDatabase
++
++/**
++ * Runs once a day in the background and posts a proverb of the day.
++ *
++ * WorkManager is the right tool here because the reminder has to survive the
++ * app being closed and the device rebooted, and because a daily notification is
++ * exactly a deferrable periodic task: the system may delay it to save battery,
++ * and that is fine for this feature.
++ */
++class DailyProverbWorker(
++    context: Context,
++    params: WorkerParameters
++) : CoroutineWorker(context, params) {
++
++    override suspend fun doWork(): Result {
++        val context = applicationContext
++        val database = MiziziDatabase.getDatabase(context)
++        val proverb = database.roomProverb() ?: return Result.success()
++
++        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
++            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !=
++            PackageManager.PERMISSION_GRANTED
++        ) {
++            return Result.success()
++        }
++
++        Notifications.ensureChannel(context)
++
++        val openApp = PendingIntent.getActivity(
++            context,
++            0,
++            Intent(context, MainActivity::class.java),
++            PendingIntent.FLAG_IMMUTABLE
++        )
++
++        val notification = NotificationCompat.Builder(context, Notifications.CHANNEL_ID)
++            .setSmallIcon(R.drawable.ic_launcher_foreground)
++            .setContentTitle(proverb.original)
++            .setContentText(proverb.meaning)
++            .setStyle(NotificationCompat.BigTextStyle().bigText(proverb.meaning))
++            .setContentIntent(openApp)
++            .setAutoCancel(true)
++            .build()
++
++        NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, notification)
++        return Result.success()
++    }
++
++    private suspend fun MiziziDatabase.roomProverb() = proverbDao().random()
++
++    private companion object {
++        const val NOTIFICATION_ID = 1001
++    }
++}
+diff --git a/app/src/main/java/com/example/mizizi/work/Notifications.kt b/app/src/main/java/com/example/mizizi/work/Notifications.kt
+new file mode 100644
+index 0000000..f8e277a
+--- /dev/null
++++ b/app/src/main/java/com/example/mizizi/work/Notifications.kt
+@@ -0,0 +1,27 @@
++package com.example.mizizi.work
++
++import android.app.NotificationChannel
++import android.app.NotificationManager
++import android.content.Context
++import android.os.Build
++
++/** Creates the notification channel the daily proverb job posts into. */
++object Notifications {
++
++    const val CHANNEL_ID = "daily_proverb"
++    private const val CHANNEL_NAME = "Daily proverb"
++
++    fun ensureChannel(context: Context) {
++        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
++
++        val manager = context.getSystemService(NotificationManager::class.java) ?: return
++        val channel = NotificationChannel(
++            CHANNEL_ID,
++            CHANNEL_NAME,
++            NotificationManager.IMPORTANCE_DEFAULT
++        ).apply {
++            description = "One proverb a day, with its meaning."
++        }
++        manager.createNotificationChannel(channel)
++    }
++}
+diff --git a/app/src/main/res/layout/fragment_daily_proverb.xml b/app/src/main/res/layout/fragment_daily_proverb.xml
+new file mode 100644
+index 0000000..1857d44
+--- /dev/null
++++ b/app/src/main/res/layout/fragment_daily_proverb.xml
+@@ -0,0 +1,114 @@
++<?xml version="1.0" encoding="utf-8"?>
++<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:background="@color/sand_background"
++    android:fillViewport="true">
++
++    <LinearLayout
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:orientation="vertical"
++        android:padding="24dp">
++
++        <TextView
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:text="@string/daily_heading"
++            android:textColor="@color/ink_muted"
++            android:textSize="14sp" />
++
++        <TextView
++            android:id="@+id/proverbText"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="12dp"
++            android:textColor="@color/ink"
++            android:textSize="26sp"
++            android:textStyle="bold"
++            tools:text="Mvumilivu hula mbivu" />
++
++        <TextView
++            android:id="@+id/meaningText"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="10dp"
++            android:textColor="@color/ink"
++            android:textSize="17sp"
++            tools:text="The patient one eats ripe fruit" />
++
++        <com.google.android.material.card.MaterialCardView
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="20dp"
++            app:cardCornerRadius="16dp"
++            app:cardElevation="0dp">
++
++            <LinearLayout
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
++                android:orientation="vertical"
++                android:padding="18dp">
++
++                <TextView
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:text="@string/result_machine_label"
++                    android:textColor="@color/ink_muted"
++                    android:textSize="14sp" />
++
++                <TextView
++                    android:id="@+id/machineText"
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:layout_marginTop="6dp"
++                    android:textColor="@color/ink"
++                    android:textSize="16sp"
++                    tools:text="Machine literal: the patient eats ripe" />
++
++                <com.google.android.material.progressindicator.LinearProgressIndicator
++                    android:id="@+id/machineProgress"
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:layout_marginTop="10dp"
++                    android:indeterminate="true"
++                    android:visibility="gone"
++                    tools:visibility="visible" />
++
++            </LinearLayout>
++
++        </com.google.android.material.card.MaterialCardView>
++
++        <TextView
++            android:id="@+id/reminderStatusText"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="24dp"
++            android:textColor="@color/ink_muted"
++            android:textSize="15sp"
++            tools:text="Daily reminder: on" />
++
++        <com.google.android.material.button.MaterialButton
++            android:id="@+id/reminderButton"
++            style="@style/Widget.Material3.Button.OutlinedButton"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="10dp"
++            android:paddingTop="14dp"
++            android:paddingBottom="14dp"
++            android:text="@string/daily_enable_reminder"
++            android:textSize="16sp" />
++
++        <com.google.android.material.button.MaterialButton
++            android:id="@+id/anotherButton"
++            style="@style/Widget.Material3.Button.TextButton"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="6dp"
++            android:text="@string/daily_another" />
++
++    </LinearLayout>
++
++</ScrollView>
+diff --git a/app/src/main/res/navigation/nav_graph.xml b/app/src/main/res/navigation/nav_graph.xml
+index 3ebf724..1adc955 100644
+--- a/app/src/main/res/navigation/nav_graph.xml
++++ b/app/src/main/res/navigation/nav_graph.xml
+@@ -20,6 +20,10 @@
+         <action
+             android:id="@+id/action_homeFragment_to_proverbEditorFragment"
+             app:destination="@id/proverbEditorFragment" />
++
++        <action
++            android:id="@+id/action_homeFragment_to_dailyProverbFragment"
++            app:destination="@id/dailyProverbFragment" />
+     </fragment>
+ 
+     <fragment
+@@ -73,4 +77,9 @@
+             app:argType="long" />
+     </fragment>
+ 
++    <fragment
++        android:id="@+id/dailyProverbFragment"
++        android:name="com.example.mizizi.ui.daily.DailyProverbFragment"
++        android:label="@string/title_daily_proverb" />
++
+ </navigation>
+diff --git a/app/src/main/res/values/strings.xml b/app/src/main/res/values/strings.xml
+index fbb45c6..e6959e9 100644
+--- a/app/src/main/res/values/strings.xml
++++ b/app/src/main/res/values/strings.xml
+@@ -64,6 +64,12 @@
+     <string name="editor_delete_title">Delete this proverb?</string>
+     <string name="editor_delete_message">%1$s will be removed from your collection.</string>
+ 
++    <string name="daily_heading">Proverb of the day</string>
++    <string name="daily_enable_reminder">Turn on the daily reminder</string>
++    <string name="daily_another">Show me another</string>
++    <string name="daily_reminder_on">Daily reminder: on</string>
++    <string name="daily_reminder_off">Daily reminder: off</string>
++
+     <plurals name="home_proverb_count">
+         <item quantity="one">%1$d proverb to practise</item>
+         <item quantity="other">%1$d proverbs to practise</item>
