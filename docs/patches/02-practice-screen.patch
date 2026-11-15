@@ -1,0 +1,412 @@
+diff --git a/app/src/main/java/com/example/mizizi/ui/home/HomeFragment.kt b/app/src/main/java/com/example/mizizi/ui/home/HomeFragment.kt
+index c68a5f5..f1d6ddb 100644
+--- a/app/src/main/java/com/example/mizizi/ui/home/HomeFragment.kt
++++ b/app/src/main/java/com/example/mizizi/ui/home/HomeFragment.kt
+@@ -6,6 +6,7 @@ import android.view.View
+ import android.view.ViewGroup
+ import androidx.fragment.app.Fragment
+ import androidx.fragment.app.activityViewModels
++import androidx.navigation.fragment.findNavController
+ import com.example.mizizi.R
+ import com.example.mizizi.databinding.FragmentHomeBinding
+ import com.example.mizizi.ui.viewmodel.MiziziViewModel
+@@ -46,7 +47,9 @@ class HomeFragment : Fragment() {
+                 resources.getQuantityString(R.plurals.home_attempt_count, attempts.size, attempts.size)
+         }
+ 
+-        binding.startPracticeButton.setOnClickListener { notYet("Practice") }
++        binding.startPracticeButton.setOnClickListener {
++            findNavController().navigate(R.id.action_homeFragment_to_practiceFragment)
++        }
+         binding.archiveButton.setOnClickListener { notYet("The archive") }
+         binding.dailyProverbButton.setOnClickListener { notYet("The daily proverb") }
+     }
+diff --git a/app/src/main/java/com/example/mizizi/ui/practice/PracticeFragment.kt b/app/src/main/java/com/example/mizizi/ui/practice/PracticeFragment.kt
+new file mode 100644
+index 0000000..fee3dc4
+--- /dev/null
++++ b/app/src/main/java/com/example/mizizi/ui/practice/PracticeFragment.kt
+@@ -0,0 +1,153 @@
++package com.example.mizizi.ui.practice
++
++import android.os.Bundle
++import android.view.LayoutInflater
++import android.view.View
++import android.view.ViewGroup
++import androidx.fragment.app.Fragment
++import androidx.fragment.app.activityViewModels
++import com.example.mizizi.R
++import com.example.mizizi.databinding.FragmentPracticeBinding
++import com.example.mizizi.domain.Grade
++import com.example.mizizi.ui.viewmodel.HintState
++import com.example.mizizi.ui.viewmodel.MiziziViewModel
++
++/**
++ * The practice session: one proverb at a time, an answer box, and feedback
++ * based on meaning instead of exact wording.
++ */
++class PracticeFragment : Fragment() {
++
++    private var _binding: FragmentPracticeBinding? = null
++    private val binding get() = _binding!!
++
++    private val viewModel: MiziziViewModel by activityViewModels()
++
++    override fun onCreateView(
++        inflater: LayoutInflater,
++        container: ViewGroup?,
++        savedInstanceState: Bundle?
++    ): View {
++        _binding = FragmentPracticeBinding.inflate(inflater, container, false)
++        return binding.root
++    }
++
++    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
++        super.onViewCreated(view, savedInstanceState)
++
++        if (!viewModel.session.value?.isActive.orFalse()) {
++            viewModel.startSession()
++        }
++
++        binding.submitButton.setOnClickListener {
++            viewModel.submitAnswer(binding.answerEditText.text?.toString().orEmpty())
++        }
++
++        binding.nextButton.setOnClickListener {
++            binding.answerEditText.text?.clear()
++            viewModel.nextQuestion()
++        }
++
++        binding.hintButton.setOnClickListener { viewModel.requestHint() }
++
++        binding.restartButton.setOnClickListener {
++            binding.answerEditText.text?.clear()
++            viewModel.startSession()
++        }
++
++        observeSession()
++        observeOutcome()
++        observeHint()
++    }
++
++    private fun observeSession() {
++        viewModel.session.observe(viewLifecycleOwner) { state ->
++            val proverb = state.current
++
++            binding.counterText.text = if (state.totalQuestions > 0) {
++                getString(R.string.practice_counter, state.questionNumber, state.totalQuestions)
++            } else {
++                getString(R.string.practice_no_proverbs)
++            }
++            binding.scoreText.text = getString(R.string.practice_score, state.score)
++            binding.proverbText.text = proverb?.original.orEmpty()
++            binding.proverbText.visibility = if (proverb == null) View.GONE else View.VISIBLE
++
++            val finished = state.finished
++            binding.summaryText.visibility = if (finished) View.VISIBLE else View.GONE
++            binding.restartButton.visibility = if (finished) View.VISIBLE else View.GONE
++            binding.submitButton.isEnabled = !finished
++            binding.hintButton.isEnabled = !finished
++            binding.answerInputLayout.visibility = if (finished) View.GONE else View.VISIBLE
++
++            if (finished) {
++                binding.summaryText.text = getString(
++                    R.string.practice_summary,
++                    state.score,
++                    state.totalQuestions
++                )
++                binding.outcomeCard.visibility = View.GONE
++            }
++        }
++    }
++
++    private fun observeOutcome() {
++        viewModel.outcome.observe(viewLifecycleOwner) { outcome ->
++            if (outcome == null) {
++                binding.outcomeCard.visibility = View.GONE
++                return@observe
++            }
++
++            binding.outcomeCard.visibility = View.VISIBLE
++            binding.outcomeGradeText.text = outcome.grade.label()
++            binding.outcomeGradeText.setTextColor(
++                requireContext().getColor(
++                    when (outcome.grade) {
++                        Grade.CORRECT -> R.color.green_primary
++                        Grade.CLOSE -> R.color.ink
++                        Grade.INCORRECT -> R.color.ink_muted
++                    }
++                )
++            )
++            binding.outcomeMeaningText.text = outcome.proverb.meaning
++            binding.outcomeKeywordsText.text = if (outcome.matchedKeywords.isEmpty()) {
++                getString(R.string.practice_no_keywords)
++            } else {
++                getString(R.string.practice_matched_keywords, outcome.matchedKeywords.joinToString(", "))
++            }
++        }
++    }
++
++    private fun observeHint() {
++        viewModel.hint.observe(viewLifecycleOwner) { state ->
++            when (state) {
++                is HintState.Idle -> {
++                    binding.hintText.visibility = View.GONE
++                    binding.hintButton.isEnabled = true
++                }
++                is HintState.Loading -> {
++                    binding.hintText.visibility = View.VISIBLE
++                    binding.hintText.text = getString(R.string.practice_hint_loading)
++                    binding.hintButton.isEnabled = false
++                }
++                is HintState.Loaded -> {
++                    binding.hintText.visibility = View.VISIBLE
++                    binding.hintText.text = getString(R.string.practice_hint_result, state.translation)
++                    binding.hintButton.isEnabled = true
++                }
++                is HintState.Failed -> {
++                    binding.hintText.visibility = View.VISIBLE
++                    binding.hintText.text = state.message
++                    binding.hintButton.isEnabled = true
++                }
++            }
++        }
++    }
++
++    private fun Boolean?.orFalse(): Boolean = this == true
++
++    override fun onDestroyView() {
++        super.onDestroyView()
++        _binding = null
++    }
++}
+diff --git a/app/src/main/res/layout/fragment_practice.xml b/app/src/main/res/layout/fragment_practice.xml
+new file mode 100644
+index 0000000..050312e
+--- /dev/null
++++ b/app/src/main/res/layout/fragment_practice.xml
+@@ -0,0 +1,176 @@
++<?xml version="1.0" encoding="utf-8"?>
++<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:background="@color/sand_background"
++    android:fillViewport="true">
++
++    <LinearLayout
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:orientation="vertical"
++        android:padding="24dp">
++
++        <TextView
++            android:id="@+id/counterText"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:textColor="@color/ink_muted"
++            android:textSize="14sp"
++            tools:text="Proverb 1 of 5" />
++
++        <TextView
++            android:id="@+id/scoreText"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="2dp"
++            android:textColor="@color/ink_muted"
++            android:textSize="14sp"
++            tools:text="Score 0" />
++
++        <TextView
++            android:id="@+id/proverbText"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="20dp"
++            android:textColor="@color/ink"
++            android:textSize="26sp"
++            android:textStyle="bold"
++            tools:text="Haraka haraka haina baraka" />
++
++        <TextView
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="8dp"
++            android:text="@string/practice_prompt"
++            android:textColor="@color/ink_muted"
++            android:textSize="15sp" />
++
++        <com.google.android.material.textfield.TextInputLayout
++            android:id="@+id/answerInputLayout"
++            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="16dp"
++            android:hint="@string/practice_answer_hint">
++
++            <com.google.android.material.textfield.TextInputEditText
++                android:id="@+id/answerEditText"
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
++                android:imeOptions="actionDone"
++                android:inputType="textMultiLine|textCapSentences"
++                android:minLines="2" />
++
++        </com.google.android.material.textfield.TextInputLayout>
++
++        <com.google.android.material.button.MaterialButton
++            android:id="@+id/submitButton"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="12dp"
++            android:paddingTop="14dp"
++            android:paddingBottom="14dp"
++            android:text="@string/practice_submit"
++            android:textSize="16sp" />
++
++        <com.google.android.material.button.MaterialButton
++            android:id="@+id/hintButton"
++            style="@style/Widget.Material3.Button.TextButton"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="4dp"
++            android:text="@string/practice_hint" />
++
++        <TextView
++            android:id="@+id/hintText"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="4dp"
++            android:textColor="@color/ink_muted"
++            android:textSize="14sp"
++            android:visibility="gone"
++            tools:text="Machine literal: haste haste has no blessing"
++            tools:visibility="visible" />
++
++        <com.google.android.material.card.MaterialCardView
++            android:id="@+id/outcomeCard"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="20dp"
++            android:visibility="gone"
++            app:cardCornerRadius="16dp"
++            app:cardElevation="0dp"
++            tools:visibility="visible">
++
++            <LinearLayout
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
++                android:orientation="vertical"
++                android:padding="18dp">
++
++                <TextView
++                    android:id="@+id/outcomeGradeText"
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:textColor="@color/green_primary"
++                    android:textSize="20sp"
++                    android:textStyle="bold"
++                    tools:text="Correct" />
++
++                <TextView
++                    android:id="@+id/outcomeMeaningText"
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:layout_marginTop="6dp"
++                    android:textColor="@color/ink"
++                    android:textSize="16sp"
++                    tools:text="Haste makes waste" />
++
++                <TextView
++                    android:id="@+id/outcomeKeywordsText"
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:layout_marginTop="6dp"
++                    android:textColor="@color/ink_muted"
++                    android:textSize="14sp"
++                    tools:text="Matched: haste, waste" />
++
++                <com.google.android.material.button.MaterialButton
++                    android:id="@+id/nextButton"
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:layout_marginTop="12dp"
++                    android:text="@string/practice_next" />
++
++            </LinearLayout>
++
++        </com.google.android.material.card.MaterialCardView>
++
++        <TextView
++            android:id="@+id/summaryText"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="20dp"
++            android:textColor="@color/ink"
++            android:textSize="17sp"
++            android:textStyle="bold"
++            android:visibility="gone"
++            tools:text="Session complete. You scored 3 out of 5."
++            tools:visibility="visible" />
++
++        <com.google.android.material.button.MaterialButton
++            android:id="@+id/restartButton"
++            style="@style/Widget.Material3.Button.OutlinedButton"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="12dp"
++            android:text="@string/practice_restart"
++            android:visibility="gone"
++            tools:visibility="visible" />
++
++    </LinearLayout>
++
++</ScrollView>
+diff --git a/app/src/main/res/navigation/nav_graph.xml b/app/src/main/res/navigation/nav_graph.xml
+index bf8a394..9008e11 100644
+--- a/app/src/main/res/navigation/nav_graph.xml
++++ b/app/src/main/res/navigation/nav_graph.xml
+@@ -7,6 +7,16 @@
+     <fragment
+         android:id="@+id/homeFragment"
+         android:name="com.example.mizizi.ui.home.HomeFragment"
+-        android:label="@string/title_home" />
++        android:label="@string/title_home">
++
++        <action
++            android:id="@+id/action_homeFragment_to_practiceFragment"
++            app:destination="@id/practiceFragment" />
++    </fragment>
++
++    <fragment
++        android:id="@+id/practiceFragment"
++        android:name="com.example.mizizi.ui.practice.PracticeFragment"
++        android:label="@string/title_practice" />
+ 
+ </navigation>
+diff --git a/app/src/main/res/values/strings.xml b/app/src/main/res/values/strings.xml
+index ce20235..9d74b5e 100644
+--- a/app/src/main/res/values/strings.xml
++++ b/app/src/main/res/values/strings.xml
+@@ -16,6 +16,21 @@
+     <string name="home_empty_state">No proverbs yet. Add your own and they show up here.</string>
+     <string name="screen_coming_soon">%1$s arrives in the next slice.</string>
+ 
++    <string name="practice_counter">Proverb %1$d of %2$d</string>
++    <string name="practice_no_proverbs">No proverbs to practise yet</string>
++    <string name="practice_score">Score %1$d</string>
++    <string name="practice_prompt">Translate the proverb into English. The feedback is based on meaning, not exact wording.</string>
++    <string name="practice_answer_hint">Your translation</string>
++    <string name="practice_submit">Check my answer</string>
++    <string name="practice_hint">Show machine translation</string>
++    <string name="practice_hint_loading">Asking the translation service...</string>
++    <string name="practice_hint_result">Machine literal: %1$s</string>
++    <string name="practice_next">Next proverb</string>
++    <string name="practice_restart">Start another session</string>
++    <string name="practice_summary">Session complete. You scored %1$d out of %2$d.</string>
++    <string name="practice_matched_keywords">Meaning words matched: %1$s</string>
++    <string name="practice_no_keywords">No meaning words matched this time.</string>
++
+     <plurals name="home_proverb_count">
+         <item quantity="one">%1$d proverb to practise</item>
+         <item quantity="other">%1$d proverbs to practise</item>
