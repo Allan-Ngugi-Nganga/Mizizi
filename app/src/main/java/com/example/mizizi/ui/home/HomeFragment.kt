@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.example.mizizi.R
 import com.example.mizizi.databinding.FragmentHomeBinding
 import com.example.mizizi.ui.viewmodel.MiziziViewModel
@@ -46,7 +47,9 @@ class HomeFragment : Fragment() {
                 resources.getQuantityString(R.plurals.home_attempt_count, attempts.size, attempts.size)
         }
 
-        binding.startPracticeButton.setOnClickListener { notYet("Practice") }
+        binding.startPracticeButton.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_practiceFragment)
+        }
         binding.archiveButton.setOnClickListener { notYet("The archive") }
         binding.dailyProverbButton.setOnClickListener { notYet("The daily proverb") }
     }

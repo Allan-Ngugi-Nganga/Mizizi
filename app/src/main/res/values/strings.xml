@@ -16,6 +16,21 @@
     <string name="home_empty_state">No proverbs yet. Add your own and they show up here.</string>
     <string name="screen_coming_soon">%1$s arrives in the next slice.</string>
 
+    <string name="practice_counter">Proverb %1$d of %2$d</string>
+    <string name="practice_no_proverbs">No proverbs to practise yet</string>
+    <string name="practice_score">Score %1$d</string>
+    <string name="practice_prompt">Translate the proverb into English. The feedback is based on meaning, not exact wording.</string>
+    <string name="practice_answer_hint">Your translation</string>
+    <string name="practice_submit">Check my answer</string>
+    <string name="practice_hint">Show machine translation</string>
+    <string name="practice_hint_loading">Asking the translation service...</string>
+    <string name="practice_hint_result">Machine literal: %1$s</string>
+    <string name="practice_next">Next proverb</string>
+    <string name="practice_restart">Start another session</string>
+    <string name="practice_summary">Session complete. You scored %1$d out of %2$d.</string>
+    <string name="practice_matched_keywords">Meaning words matched: %1$s</string>
+    <string name="practice_no_keywords">No meaning words matched this time.</string>
+
     <plurals name="home_proverb_count">
         <item quantity="one">%1$d proverb to practise</item>
         <item quantity="other">%1$d proverbs to practise</item>
