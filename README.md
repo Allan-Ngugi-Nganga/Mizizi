@@ -109,7 +109,10 @@ and archive are still there.
   because the reminder must survive the app being closed and the device
   rebooting, and the system is allowed to delay a daily notification to save
   battery. It posts into a `daily_proverb` notification channel and asks for
-  `POST_NOTIFICATIONS` on Android 13 and newer.
+  `POST_NOTIFICATIONS` on Android 13 and newer. The first reminder arrives soon
+  after the switch is turned on, then repeats daily.
+
+![Daily reminder notification](docs/screenshots/notification.png)
 
 ## Repository structure
 
@@ -126,8 +129,8 @@ Mizizi/
 ├── CONTRIBUTING.md      # Branch, commit and PR conventions
 ├── docs/
 │   ├── concept-note.md  # Concept note (mirror of the Google Doc)
-│   ├── contribution-plan.md
-│   └── release-checklist.md
+│   ├── release-checklist.md
+│   └── screenshots/     # Screens captured from the signed build
 └── .gitignore
 ```
 
@@ -191,15 +194,15 @@ kotlinc Main.kt -include-runtime -d mizizi.jar && java -jar mizizi.jar
 
 Every member built a slice of the Android app and committed it themselves.
 
-| Member | Admission No. | Slice | Branch |
+| Member | Admission No. | Commit | Slice |
 |---|---|---|---|
-| Allan Ngugi | 191250 | Project setup, data layer (Room, repository, translation client), ViewModel, grading rules, navigation shell, Home screen | `feature/android-app` |
-| Ziki Mtula | 192992 | Practice screen: question flow, answer input, inline grade, session score | `feature/practice-screen` |
-| Michael Asingwire | 192483 | Result screen: Safe Args, grade colours, meaning words matched, machine translation card | `feature/result-screen` |
-| Kelly Wambui | 190500 | Archive: RecyclerView with diffing adapter, delete and clear-all with confirmation, empty state | `feature/archive` |
-| Daniella Thande | 152581 | Proverb editor: create and update in one form, delete, inline validation | `feature/proverb-editor` |
-| Evelyn Mwangi | 190051 | Daily proverb, MyMemory integration with loading and error states, WorkManager reminder | `feature/daily-proverb` |
-| Daniel Karanja | 180761 | README, screenshots, signing and release | `release/v1.0` |
+| Allan Ngugi | 191250 | `423bece` | Project setup, data layer (Room, repository, translation client), ViewModel, grading rules, navigation shell, Home screen |
+| Ziki Mtula | 192992 | `2bed260` | Practice screen: question flow, answer input, inline grade, session score |
+| Michael Asingwire | 192483 | `e6c095a` | Result screen: Safe Args, grade colours, meaning words matched, machine translation card |
+| Kelly Wambui | 190500 | `80c773c` | Archive: RecyclerView with diffing adapter, delete and clear-all with confirmation, empty state |
+| Daniella Thande | 152581 | `b6ccdc3` | Proverb editor: create and update in one form, delete, inline validation |
+| Evelyn Mwangi | 190051 | `c549827` | Daily proverb, MyMemory integration with loading and error states, WorkManager reminder |
+| Daniel Karanja | 180761 | `36a31b2` | README, screenshots, signing and release |
 
 Each member's slice landed as its own commit. The slices were then assembled
 through two pull requests: one into `develop`, and one from `release/v1.0` into

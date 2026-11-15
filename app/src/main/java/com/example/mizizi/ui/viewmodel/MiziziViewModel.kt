@@ -10,28 +10,10 @@ import com.example.mizizi.data.model.AttemptEntity
 import com.example.mizizi.data.model.ProverbEntity
 import com.example.mizizi.data.remote.ApiResult
 import com.example.mizizi.data.repository.MiziziRepository
-import com.example.mizizi.domain.Grade
-import com.example.mizizi.domain.Grader
+import com.example.mizizi.domain.AttemptOutcome
+import com.example.mizizi.domain.SessionEngine
+import com.example.mizizi.domain.SessionState
 import kotlinx.coroutines.launch
-
-/** What the practice screen needs to render one question and its score. */
-data class SessionState(
-    val questionNumber: Int = 0,
-    val totalQuestions: Int = 0,
-    val score: Int = 0,
-    val current: ProverbEntity? = null,
-    val finished: Boolean = false
-) {
-    val isActive: Boolean get() = totalQuestions > 0 && !finished
-}
-
-/** The outcome of the attempt that was just submitted. */
-data class AttemptOutcome(
-    val proverb: ProverbEntity,
-    val answer: String,
-    val grade: Grade,
-    val matchedKeywords: List<String>
-)
 
 /** State of the optional literal-translation hint. */
 sealed class HintState {
@@ -73,63 +55,31 @@ class MiziziViewModel(application: Application) : AndroidViewModel(application) 
     private val _formResult = MutableLiveData<FormResult?>()
     val formResult: LiveData<FormResult?> = _formResult
 
-    private var queue: List<ProverbEntity> = emptyList()
+    private val engine = SessionEngine()
 
-    /** Starts a fresh session of up to [SESSION_SIZE] random proverbs. */
+    /** Starts a fresh session of up to [SessionEngine.DEFAULT_SESSION_SIZE] random proverbs. */
     fun startSession() {
-        val available = proverbs.value.orEmpty()
-        if (available.isEmpty()) {
-            _session.value = SessionState(finished = true)
-            return
-        }
-        queue = available.shuffled().take(SESSION_SIZE)
         _outcome.value = null
         _hint.value = HintState.Idle
-        _session.value = SessionState(
-            questionNumber = 1,
-            totalQuestions = queue.size,
-            score = 0,
-            current = queue.first(),
-            finished = false
-        )
+        _session.value = engine.start(proverbs.value.orEmpty())
     }
 
     /** Grades [answer], saves the attempt and publishes the outcome. */
     fun submitAnswer(answer: String) {
-        val state = _session.value ?: return
-        val proverb = state.current ?: return
-        if (answer.isBlank()) {
-            _outcome.value = AttemptOutcome(proverb, answer, Grade.INCORRECT, emptyList())
-            return
-        }
-
-        val grade = Grader.grade(proverb.keywordList(), proverb.meaning, answer)
-        val matched = Grader.matchedKeywords(proverb.keywordList(), answer)
-        val updatedScore = if (grade == Grade.CORRECT) state.score + 1 else state.score
-
-        _session.value = state.copy(score = updatedScore)
-        _outcome.value = AttemptOutcome(proverb, answer, grade, matched)
+        val outcome = engine.submit(answer) ?: return
+        _session.value = engine.state
+        _outcome.value = outcome
 
         viewModelScope.launch {
-            repository.recordAttempt(proverb, answer, grade.name)
+            repository.recordAttempt(outcome.proverb, answer, outcome.grade.name)
         }
     }
 
     /** Moves to the next proverb, or marks the session finished. */
     fun nextQuestion() {
-        val state = _session.value ?: return
-        val nextIndex = state.questionNumber
         _outcome.value = null
         _hint.value = HintState.Idle
-
-        if (nextIndex >= queue.size) {
-            _session.value = state.copy(finished = true, current = null)
-        } else {
-            _session.value = state.copy(
-                questionNumber = nextIndex + 1,
-                current = queue[nextIndex]
-            )
-        }
+        _session.value = engine.next()
     }
 
     /** Asks the repository for a literal translation of the current proverb. */
@@ -161,10 +111,9 @@ class MiziziViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun resetSession() {
-        queue = emptyList()
         _outcome.value = null
         _hint.value = HintState.Idle
-        _session.value = SessionState()
+        _session.value = engine.reset()
     }
 
     /** Creates a prose. Validation lives here so the UI cannot skip it. */
@@ -223,7 +172,6 @@ class MiziziViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private companion object {
-        const val SESSION_SIZE = 5
         const val MIN_PROVERB_LENGTH = 6
     }
 }
