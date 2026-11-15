@@ -7,6 +7,79 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.mizizi.ui.home.HomeFragment"
-        android:label="@string/title_home" />
+        android:label="@string/title_home">
+
+        <action
+            android:id="@+id/action_homeFragment_to_practiceFragment"
+            app:destination="@id/practiceFragment" />
+
+        <action
+            android:id="@+id/action_homeFragment_to_archiveFragment"
+            app:destination="@id/archiveFragment" />
+
+        <action
+            android:id="@+id/action_homeFragment_to_proverbEditorFragment"
+            app:destination="@id/proverbEditorFragment" />
+
+        <action
+            android:id="@+id/action_homeFragment_to_dailyProverbFragment"
+            app:destination="@id/dailyProverbFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/practiceFragment"
+        android:name="com.example.mizizi.ui.practice.PracticeFragment"
+        android:label="@string/title_practice">
+
+        <action
+            android:id="@+id/action_practiceFragment_to_resultFragment"
+            app:destination="@id/resultFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/resultFragment"
+        android:name="com.example.mizizi.ui.result.ResultFragment"
+        android:label="@string/title_result">
+
+        <argument
+            android:name="proverbOriginal"
+            app:argType="string" />
+        <argument
+            android:name="meaning"
+            app:argType="string" />
+        <argument
+            android:name="answer"
+            app:argType="string" />
+        <argument
+            android:name="grade"
+            app:argType="string" />
+        <argument
+            android:name="matchedKeywords"
+            app:argType="string" />
+        <argument
+            android:name="sessionFinished"
+            app:argType="boolean" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/archiveFragment"
+        android:name="com.example.mizizi.ui.archive.ArchiveFragment"
+        android:label="@string/title_archive" />
+
+    <fragment
+        android:id="@+id/proverbEditorFragment"
+        android:name="com.example.mizizi.ui.editor.ProverbEditorFragment"
+        android:label="@string/title_editor">
+
+        <argument
+            android:name="proverbId"
+            android:defaultValue="-1L"
+            app:argType="long" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/dailyProverbFragment"
+        android:name="com.example.mizizi.ui.daily.DailyProverbFragment"
+        android:label="@string/title_daily_proverb" />
 
 </navigation>

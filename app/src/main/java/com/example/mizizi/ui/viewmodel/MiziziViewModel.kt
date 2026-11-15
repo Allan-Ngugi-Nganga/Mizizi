@@ -146,6 +146,20 @@ class MiziziViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    /**
+     * Translates any proverb on demand and reports the outcome through
+     * [onResult], so a screen can show a loading state while it waits.
+     */
+    fun requestMachineTranslation(original: String, onResult: (String) -> Unit) {
+        viewModelScope.launch {
+            val text = when (val result = repository.literalTranslation(original)) {
+                is ApiResult.Success -> result.value
+                is ApiResult.Error -> result.message
+            }
+            onResult(text)
+        }
+    }
+
     fun resetSession() {
         queue = emptyList()
         _outcome.value = null

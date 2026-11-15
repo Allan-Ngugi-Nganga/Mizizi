@@ -22,6 +22,10 @@ interface ProverbDao {
     @Query("SELECT COUNT(*) FROM proverbs")
     suspend fun count(): Int
 
+    /** One random proverb, used by the daily reminder job. */
+    @Query("SELECT * FROM proverbs ORDER BY RANDOM() LIMIT 1")
+    suspend fun random(): ProverbEntity?
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insert(proverb: ProverbEntity): Long
 
