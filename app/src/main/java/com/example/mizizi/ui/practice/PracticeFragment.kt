@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.example.mizizi.R
 import com.example.mizizi.databinding.FragmentPracticeBinding
 import com.example.mizizi.domain.Grade
@@ -49,6 +50,19 @@ class PracticeFragment : Fragment() {
         }
 
         binding.hintButton.setOnClickListener { viewModel.requestHint() }
+
+        binding.fullFeedbackButton.setOnClickListener {
+            val outcome = viewModel.outcome.value ?: return@setOnClickListener
+            val action = PracticeFragmentDirections.actionPracticeFragmentToResultFragment(
+                proverbOriginal = outcome.proverb.original,
+                meaning = outcome.proverb.meaning,
+                answer = outcome.answer,
+                grade = outcome.grade.name,
+                matchedKeywords = outcome.matchedKeywords.joinToString(", "),
+                sessionFinished = false
+            )
+            findNavController().navigate(action)
+        }
 
         binding.restartButton.setOnClickListener {
             binding.answerEditText.text?.clear()

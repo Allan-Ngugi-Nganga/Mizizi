@@ -17,6 +17,36 @@
     <fragment
         android:id="@+id/practiceFragment"
         android:name="com.example.mizizi.ui.practice.PracticeFragment"
-        android:label="@string/title_practice" />
+        android:label="@string/title_practice">
+
+        <action
+            android:id="@+id/action_practiceFragment_to_resultFragment"
+            app:destination="@id/resultFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/resultFragment"
+        android:name="com.example.mizizi.ui.result.ResultFragment"
+        android:label="@string/title_result">
+
+        <argument
+            android:name="proverbOriginal"
+            app:argType="string" />
+        <argument
+            android:name="meaning"
+            app:argType="string" />
+        <argument
+            android:name="answer"
+            app:argType="string" />
+        <argument
+            android:name="grade"
+            app:argType="string" />
+        <argument
+            android:name="matchedKeywords"
+            app:argType="string" />
+        <argument
+            android:name="sessionFinished"
+            app:argType="boolean" />
+    </fragment>
 
 </navigation>

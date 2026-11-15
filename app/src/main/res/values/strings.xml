@@ -30,6 +30,14 @@
     <string name="practice_summary">Session complete. You scored %1$d out of %2$d.</string>
     <string name="practice_matched_keywords">Meaning words matched: %1$s</string>
     <string name="practice_no_keywords">No meaning words matched this time.</string>
+    <string name="practice_full_feedback">See full feedback</string>
+
+    <string name="result_your_answer">Your answer</string>
+    <string name="result_meaning">What it means</string>
+    <string name="result_machine_label">Machine literal translation, for comparison</string>
+    <string name="result_continue">Back to the question</string>
+    <string name="result_back_home">Back to home</string>
+    <string name="result_no_answer">You left this one blank.</string>
 
     <plurals name="home_proverb_count">
         <item quantity="one">%1$d proverb to practise</item>
