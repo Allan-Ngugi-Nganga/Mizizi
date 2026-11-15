@@ -42,7 +42,10 @@ meaning-based feedback on their attempts, instead of a blind literal translation
 | Proverb of the day | A daily proverb, its translation, and the daily reminder switch |
 
 ![Home screen](docs/screenshots/01-home.png)
+![Practice](docs/screenshots/04-practice.png)
+![Result](docs/screenshots/05-result.png)
 ![Archive](docs/screenshots/02-archive.png)
+![Proverb editor](docs/screenshots/06-editor.png)
 ![Proverb of the day](docs/screenshots/03-daily-proverb.png)
 
 ## Download
@@ -198,8 +201,9 @@ Every member built a slice of the Android app and committed it themselves.
 | Evelyn Mwangi | 190051 | Daily proverb, MyMemory integration with loading and error states, WorkManager reminder | `feature/daily-proverb` |
 | Daniel Karanja | 180761 | README, screenshots, signing and release | `release/v1.0` |
 
-Each slice was reviewed by another member and merged into `develop` through a
-pull request, then `develop` was merged into `main` for the release.
+Each member's slice landed as its own commit. The slices were then assembled
+through two pull requests: one into `develop`, and one from `release/v1.0` into
+`main` for the release.
 
 ## Tests
 
