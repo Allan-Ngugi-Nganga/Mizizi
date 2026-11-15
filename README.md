@@ -45,6 +45,12 @@ meaning-based feedback on their attempts, instead of a blind literal translation
 ![Archive](docs/screenshots/02-archive.png)
 ![Proverb of the day](docs/screenshots/03-daily-proverb.png)
 
+## Download
+
+The signed APK is attached to the [v1.0 release](https://github.com/Allan-Ngugi-Nganga/Mizizi/releases/latest).
+Install it on Android 7.0 (API 24) or newer, allow installs from the app you
+open it with, and the app seeds itself with eight proverbs on first launch.
+
 ## Architecture and data flow
 
 The app uses the layering the course asks for, and each layer has one job:
@@ -178,15 +184,33 @@ Console prototype from Lab 1, kept for reference:
 kotlinc Main.kt -include-runtime -d mizizi.jar && java -jar mizizi.jar
 ```
 
-## Team
+## Team and contributions
 
-- Allan Ngugi - 191250
-- Ziki Mtula - 192992
-- Michael Asingwire - 192483
-- Kelly Wambui - 190500
-- Daniella Thande - 152581
-- Evelyn Mwangi - 190051
-- Daniel Karanja - 180761
+Every member built a slice of the Android app and committed it themselves.
+
+| Member | Admission No. | Slice | Branch |
+|---|---|---|---|
+| Allan Ngugi | 191250 | Project setup, data layer (Room, repository, translation client), ViewModel, grading rules, navigation shell, Home screen | `feature/android-app` |
+| Ziki Mtula | 192992 | Practice screen: question flow, answer input, inline grade, session score | `feature/practice-screen` |
+| Michael Asingwire | 192483 | Result screen: Safe Args, grade colours, meaning words matched, machine translation card | `feature/result-screen` |
+| Kelly Wambui | 190500 | Archive: RecyclerView with diffing adapter, delete and clear-all with confirmation, empty state | `feature/archive` |
+| Daniella Thande | 152581 | Proverb editor: create and update in one form, delete, inline validation | `feature/proverb-editor` |
+| Evelyn Mwangi | 190051 | Daily proverb, MyMemory integration with loading and error states, WorkManager reminder | `feature/daily-proverb` |
+| Daniel Karanja | 180761 | README, screenshots, signing and release | `release/v1.0` |
+
+Each slice was reviewed by another member and merged into `develop` through a
+pull request, then `develop` was merged into `main` for the release.
+
+## Tests
+
+`domain/Grader.kt` holds the grading rules as pure Kotlin so they can be tested
+without Android. Nine unit tests in `app/src/test` cover exact matches,
+punctuation and casing, keyword majorities, close attempts, blank answers and
+normalisation.
+
+```bash
+./gradlew testDebugUnitTest
+```
 
 ## Concept note
 
