@@ -109,7 +109,10 @@ and archive are still there.
   because the reminder must survive the app being closed and the device
   rebooting, and the system is allowed to delay a daily notification to save
   battery. It posts into a `daily_proverb` notification channel and asks for
-  `POST_NOTIFICATIONS` on Android 13 and newer.
+  `POST_NOTIFICATIONS` on Android 13 and newer. The first reminder arrives soon
+  after the switch is turned on, then repeats daily.
+
+![Daily reminder notification](docs/screenshots/notification.png)
 
 ## Repository structure
 

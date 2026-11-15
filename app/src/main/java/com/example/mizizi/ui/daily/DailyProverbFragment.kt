@@ -108,8 +108,9 @@ class DailyProverbFragment : Fragment() {
     }
 
     private fun scheduleReminder() {
+        // No initial delay: the first reminder arrives soon after the switch is
+        // turned on, and WorkManager repeats it every day after that.
         val request = PeriodicWorkRequestBuilder<DailyProverbWorker>(1, TimeUnit.DAYS)
-            .setInitialDelay(1, TimeUnit.HOURS)
             .build()
 
         WorkManager.getInstance(requireContext()).enqueueUniquePeriodicWork(
