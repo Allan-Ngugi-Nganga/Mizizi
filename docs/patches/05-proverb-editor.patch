@@ -1,0 +1,330 @@
+diff --git a/app/src/main/java/com/example/mizizi/ui/editor/ProverbEditorFragment.kt b/app/src/main/java/com/example/mizizi/ui/editor/ProverbEditorFragment.kt
+new file mode 100644
+index 0000000..fc39578
+--- /dev/null
++++ b/app/src/main/java/com/example/mizizi/ui/editor/ProverbEditorFragment.kt
+@@ -0,0 +1,119 @@
++package com.example.mizizi.ui.editor
++
++import android.os.Bundle
++import android.view.LayoutInflater
++import android.view.View
++import android.view.ViewGroup
++import android.widget.Toast
++import androidx.fragment.app.Fragment
++import androidx.fragment.app.activityViewModels
++import androidx.navigation.fragment.findNavController
++import com.example.mizizi.R
++import com.example.mizizi.data.model.ProverbEntity
++import com.example.mizizi.databinding.FragmentProverbEditorBinding
++import com.example.mizizi.ui.viewmodel.FormResult
++import com.example.mizizi.ui.viewmodel.MiziziViewModel
++import com.google.android.material.dialog.MaterialAlertDialogBuilder
++
++/**
++ * Create, update or delete a proverb. One screen covers both the create and the
++ * update half of CRUD: opening it with a proverb id pre-fills the fields and
++ * shows the delete action.
++ */
++class ProverbEditorFragment : Fragment() {
++
++    private var _binding: FragmentProverbEditorBinding? = null
++    private val binding get() = _binding!!
++
++    private val viewModel: MiziziViewModel by activityViewModels()
++
++    private var editing: ProverbEntity? = null
++    private var loaded = false
++
++    override fun onCreateView(
++        inflater: LayoutInflater,
++        container: ViewGroup?,
++        savedInstanceState: Bundle?
++    ): View {
++        _binding = FragmentProverbEditorBinding.inflate(inflater, container, false)
++        return binding.root
++    }
++
++    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
++        super.onViewCreated(view, savedInstanceState)
++
++        val proverbId = ProverbEditorFragmentArgs.fromBundle(requireArguments()).proverbId
++
++        if (proverbId > 0) {
++            binding.editorTitleText.text = getString(R.string.editor_title_edit)
++            binding.deleteButton.visibility = View.VISIBLE
++            viewModel.proverbs.observe(viewLifecycleOwner) { proverbs ->
++                if (loaded) return@observe
++                proverbs.firstOrNull { it.id == proverbId }?.let { proverb ->
++                    loaded = true
++                    editing = proverb
++                    binding.originalEditText.setText(proverb.original)
++                    binding.meaningEditText.setText(proverb.meaning)
++                    binding.keywordsEditText.setText(proverb.keywordList().joinToString(", "))
++                }
++            }
++        } else {
++            binding.editorTitleText.text = getString(R.string.editor_title_add)
++        }
++
++        binding.saveButton.setOnClickListener { save() }
++        binding.deleteButton.setOnClickListener { confirmDelete() }
++
++        viewModel.formResult.observe(viewLifecycleOwner) { result ->
++            when (result) {
++                is FormResult.Invalid -> showError(result.message)
++                is FormResult.Saved -> {
++                    viewModel.clearFormResult()
++                    Toast.makeText(
++                        requireContext(),
++                        R.string.editor_saved,
++                        Toast.LENGTH_SHORT
++                    ).show()
++                    findNavController().popBackStack()
++                }
++                null -> binding.formErrorText.visibility = View.GONE
++            }
++        }
++    }
++
++    private fun save() {
++        val original = binding.originalEditText.text?.toString().orEmpty()
++        val meaning = binding.meaningEditText.text?.toString().orEmpty()
++        val keywords = binding.keywordsEditText.text?.toString().orEmpty()
++
++        val current = editing
++        if (current == null) {
++            viewModel.createProverb(original, meaning, keywords)
++        } else {
++            viewModel.editProverb(current, original, meaning, keywords)
++        }
++    }
++
++    private fun confirmDelete() {
++        val current = editing ?: return
++        MaterialAlertDialogBuilder(requireContext())
++            .setTitle(R.string.editor_delete_title)
++            .setMessage(getString(R.string.editor_delete_message, current.original))
++            .setNegativeButton(R.string.archive_cancel, null)
++            .setPositiveButton(R.string.archive_delete) { _, _ ->
++                viewModel.deleteProverb(current)
++                findNavController().popBackStack()
++            }
++            .show()
++    }
++
++    private fun showError(message: String) {
++        binding.formErrorText.text = message
++        binding.formErrorText.visibility = View.VISIBLE
++    }
++
++    override fun onDestroyView() {
++        super.onDestroyView()
++        _binding = null
++    }
++}
+diff --git a/app/src/main/java/com/example/mizizi/ui/home/HomeFragment.kt b/app/src/main/java/com/example/mizizi/ui/home/HomeFragment.kt
+index 551297d..ec77ace 100644
+--- a/app/src/main/java/com/example/mizizi/ui/home/HomeFragment.kt
++++ b/app/src/main/java/com/example/mizizi/ui/home/HomeFragment.kt
+@@ -53,6 +53,9 @@ class HomeFragment : Fragment() {
+         binding.archiveButton.setOnClickListener {
+             findNavController().navigate(R.id.action_homeFragment_to_archiveFragment)
+         }
++        binding.addProverbButton.setOnClickListener {
++            findNavController().navigate(R.id.action_homeFragment_to_proverbEditorFragment)
++        }
+         binding.dailyProverbButton.setOnClickListener { notYet("The daily proverb") }
+     }
+ 
+diff --git a/app/src/main/res/layout/fragment_home.xml b/app/src/main/res/layout/fragment_home.xml
+index 0ec8b8f..3bcaf69 100644
+--- a/app/src/main/res/layout/fragment_home.xml
++++ b/app/src/main/res/layout/fragment_home.xml
+@@ -95,6 +95,17 @@
+             android:text="@string/home_open_archive"
+             android:textSize="16sp" />
+ 
++        <com.google.android.material.button.MaterialButton
++            android:id="@+id/addProverbButton"
++            style="@style/Widget.Material3.Button.OutlinedButton"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="12dp"
++            android:paddingTop="14dp"
++            android:paddingBottom="14dp"
++            android:text="@string/home_add_proverb"
++            android:textSize="16sp" />
++
+         <com.google.android.material.button.MaterialButton
+             android:id="@+id/dailyProverbButton"
+             style="@style/Widget.Material3.Button.TextButton"
+diff --git a/app/src/main/res/layout/fragment_proverb_editor.xml b/app/src/main/res/layout/fragment_proverb_editor.xml
+new file mode 100644
+index 0000000..fec0015
+--- /dev/null
++++ b/app/src/main/res/layout/fragment_proverb_editor.xml
+@@ -0,0 +1,108 @@
++<?xml version="1.0" encoding="utf-8"?>
++<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:background="@color/sand_background"
++    android:fillViewport="true">
++
++    <LinearLayout
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:orientation="vertical"
++        android:padding="24dp">
++
++        <TextView
++            android:id="@+id/editorTitleText"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:textColor="@color/ink"
++            android:textSize="22sp"
++            android:textStyle="bold"
++            tools:text="Add a proverb" />
++
++        <com.google.android.material.textfield.TextInputLayout
++            android:id="@+id/originalInputLayout"
++            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="18dp"
++            android:hint="@string/editor_original_hint">
++
++            <com.google.android.material.textfield.TextInputEditText
++                android:id="@+id/originalEditText"
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
++                android:inputType="textCapSentences" />
++
++        </com.google.android.material.textfield.TextInputLayout>
++
++        <com.google.android.material.textfield.TextInputLayout
++            android:id="@+id/meaningInputLayout"
++            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="12dp"
++            android:hint="@string/editor_meaning_hint">
++
++            <com.google.android.material.textfield.TextInputEditText
++                android:id="@+id/meaningEditText"
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
++                android:inputType="textCapSentences" />
++
++        </com.google.android.material.textfield.TextInputLayout>
++
++        <com.google.android.material.textfield.TextInputLayout
++            android:id="@+id/keywordsInputLayout"
++            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="12dp"
++            android:hint="@string/editor_keywords_hint"
++            app:helperText="@string/editor_keywords_helper">
++
++            <com.google.android.material.textfield.TextInputEditText
++                android:id="@+id/keywordsEditText"
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
++                android:inputType="text" />
++
++        </com.google.android.material.textfield.TextInputLayout>
++
++        <TextView
++            android:id="@+id/formErrorText"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="10dp"
++            android:textColor="@color/ink_muted"
++            android:textSize="14sp"
++            android:visibility="gone"
++            tools:text="Enter the meaning or translation"
++            tools:visibility="visible" />
++
++        <com.google.android.material.button.MaterialButton
++            android:id="@+id/saveButton"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="20dp"
++            android:paddingTop="14dp"
++            android:paddingBottom="14dp"
++            android:text="@string/editor_save"
++            android:textSize="16sp" />
++
++        <com.google.android.material.button.MaterialButton
++            android:id="@+id/deleteButton"
++            style="@style/Widget.Material3.Button.TextButton"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="8dp"
++            android:text="@string/editor_delete"
++            android:textColor="@color/ink_muted"
++            android:visibility="gone"
++            tools:visibility="visible" />
++
++    </LinearLayout>
++
++</ScrollView>
+diff --git a/app/src/main/res/navigation/nav_graph.xml b/app/src/main/res/navigation/nav_graph.xml
+index 614bdc2..3ebf724 100644
+--- a/app/src/main/res/navigation/nav_graph.xml
++++ b/app/src/main/res/navigation/nav_graph.xml
+@@ -16,6 +16,10 @@
+         <action
+             android:id="@+id/action_homeFragment_to_archiveFragment"
+             app:destination="@id/archiveFragment" />
++
++        <action
++            android:id="@+id/action_homeFragment_to_proverbEditorFragment"
++            app:destination="@id/proverbEditorFragment" />
+     </fragment>
+ 
+     <fragment
+@@ -58,4 +62,15 @@
+         android:name="com.example.mizizi.ui.archive.ArchiveFragment"
+         android:label="@string/title_archive" />
+ 
++    <fragment
++        android:id="@+id/proverbEditorFragment"
++        android:name="com.example.mizizi.ui.editor.ProverbEditorFragment"
++        android:label="@string/title_editor">
++
++        <argument
++            android:name="proverbId"
++            android:defaultValue="-1L"
++            app:argType="long" />
++    </fragment>
++
+ </navigation>
+diff --git a/app/src/main/res/values/strings.xml b/app/src/main/res/values/strings.xml
+index 06cc92f..fbb45c6 100644
+--- a/app/src/main/res/values/strings.xml
++++ b/app/src/main/res/values/strings.xml
+@@ -51,6 +51,19 @@
+     <string name="archive_clear_title">Clear the archive?</string>
+     <string name="archive_clear_message">Every recorded attempt will be deleted. This cannot be undone.</string>
+ 
++    <string name="home_add_proverb">Add a proverb</string>
++    <string name="editor_title_add">Add a proverb</string>
++    <string name="editor_title_edit">Edit proverb</string>
++    <string name="editor_original_hint">Proverb in the original language</string>
++    <string name="editor_meaning_hint">Meaning or English translation</string>
++    <string name="editor_keywords_hint">Meaning words</string>
++    <string name="editor_keywords_helper">Comma separated, e.g. haste, hurry, waste</string>
++    <string name="editor_save">Save proverb</string>
++    <string name="editor_delete">Delete this proverb</string>
++    <string name="editor_saved">Proverb saved</string>
++    <string name="editor_delete_title">Delete this proverb?</string>
++    <string name="editor_delete_message">%1$s will be removed from your collection.</string>
++
+     <plurals name="home_proverb_count">
+         <item quantity="one">%1$d proverb to practise</item>
+         <item quantity="other">%1$d proverbs to practise</item>

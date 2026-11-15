@@ -1,0 +1,374 @@
+diff --git a/app/src/main/java/com/example/mizizi/ui/archive/ArchiveAdapter.kt b/app/src/main/java/com/example/mizizi/ui/archive/ArchiveAdapter.kt
+new file mode 100644
+index 0000000..df65150
+--- /dev/null
++++ b/app/src/main/java/com/example/mizizi/ui/archive/ArchiveAdapter.kt
+@@ -0,0 +1,65 @@
++package com.example.mizizi.ui.archive
++
++import android.view.LayoutInflater
++import android.view.ViewGroup
++import androidx.recyclerview.widget.DiffUtil
++import androidx.recyclerview.widget.ListAdapter
++import androidx.recyclerview.widget.RecyclerView
++import com.example.mizizi.R
++import com.example.mizizi.data.model.AttemptEntity
++import com.example.mizizi.databinding.ItemAttemptBinding
++import java.text.DateFormat
++import java.util.Date
++
++/**
++ * Renders the archive, newest attempt first. A new list is diffed rather than
++ * rebuilt, so deleting one row animates instead of redrawing the screen.
++ */
++class ArchiveAdapter(
++    private val onDelete: (AttemptEntity) -> Unit
++) : ListAdapter<AttemptEntity, ArchiveAdapter.AttemptViewHolder>(DIFF) {
++
++    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AttemptViewHolder {
++        val binding = ItemAttemptBinding.inflate(
++            LayoutInflater.from(parent.context),
++            parent,
++            false
++        )
++        return AttemptViewHolder(binding, onDelete)
++    }
++
++    override fun onBindViewHolder(holder: AttemptViewHolder, position: Int) {
++        holder.bind(getItem(position))
++    }
++
++    class AttemptViewHolder(
++        private val binding: ItemAttemptBinding,
++        private val onDelete: (AttemptEntity) -> Unit
++    ) : RecyclerView.ViewHolder(binding.root) {
++
++        fun bind(attempt: AttemptEntity) {
++            binding.originalText.text = attempt.proverbOriginal
++            binding.answerText.text = binding.root.context.getString(
++                R.string.archive_your_answer,
++                attempt.userAnswer.ifBlank { binding.root.context.getString(R.string.result_no_answer) }
++            )
++            binding.gradeText.text = binding.root.context.getString(
++                R.string.archive_grade_and_date,
++                attempt.grade.lowercase().replaceFirstChar { it.uppercase() },
++                DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
++                    .format(Date(attempt.createdAt))
++            )
++            binding.deleteButton.setOnClickListener { onDelete(attempt) }
++        }
++    }
++
++    private companion object {
++        val DIFF = object : DiffUtil.ItemCallback<AttemptEntity>() {
++            override fun areItemsTheSame(oldItem: AttemptEntity, newItem: AttemptEntity): Boolean =
++                oldItem.id == newItem.id
++
++            override fun areContentsTheSame(oldItem: AttemptEntity, newItem: AttemptEntity): Boolean =
++                oldItem == newItem
++        }
++    }
++}
+diff --git a/app/src/main/java/com/example/mizizi/ui/archive/ArchiveFragment.kt b/app/src/main/java/com/example/mizizi/ui/archive/ArchiveFragment.kt
+new file mode 100644
+index 0000000..43aabe9
+--- /dev/null
++++ b/app/src/main/java/com/example/mizizi/ui/archive/ArchiveFragment.kt
+@@ -0,0 +1,85 @@
++package com.example.mizizi.ui.archive
++
++import android.os.Bundle
++import android.view.LayoutInflater
++import android.view.View
++import android.view.ViewGroup
++import androidx.fragment.app.Fragment
++import androidx.fragment.app.activityViewModels
++import androidx.recyclerview.widget.LinearLayoutManager
++import com.example.mizizi.R
++import com.example.mizizi.databinding.FragmentArchiveBinding
++import com.example.mizizi.ui.viewmodel.MiziziViewModel
++import com.google.android.material.dialog.MaterialAlertDialogBuilder
++
++/**
++ * Every attempt the user has recorded, newest first, with a delete per row and
++ * a clear-all action. Empty state is shown when there is nothing to list.
++ */
++class ArchiveFragment : Fragment() {
++
++    private var _binding: FragmentArchiveBinding? = null
++    private val binding get() = _binding!!
++
++    private val viewModel: MiziziViewModel by activityViewModels()
++
++    private val adapter = ArchiveAdapter { attempt ->
++        confirmDelete(attempt.id, attempt.proverbOriginal)
++    }
++
++    override fun onCreateView(
++        inflater: LayoutInflater,
++        container: ViewGroup?,
++        savedInstanceState: Bundle?
++    ): View {
++        _binding = FragmentArchiveBinding.inflate(inflater, container, false)
++        return binding.root
++    }
++
++    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
++        super.onViewCreated(view, savedInstanceState)
++
++        binding.archiveRecyclerView.layoutManager = LinearLayoutManager(requireContext())
++        binding.archiveRecyclerView.adapter = adapter
++
++        viewModel.attempts.observe(viewLifecycleOwner) { attempts ->
++            adapter.submitList(attempts)
++
++            val empty = attempts.isEmpty()
++            binding.emptyStateGroup.visibility = if (empty) View.VISIBLE else View.GONE
++            binding.archiveRecyclerView.visibility = if (empty) View.GONE else View.VISIBLE
++            binding.clearArchiveButton.visibility = if (empty) View.GONE else View.VISIBLE
++            binding.archiveCountText.text =
++                resources.getQuantityString(R.plurals.home_attempt_count, attempts.size, attempts.size)
++        }
++
++        binding.clearArchiveButton.setOnClickListener { confirmClearAll() }
++    }
++
++    private fun confirmDelete(attemptId: Long, proverb: String) {
++        MaterialAlertDialogBuilder(requireContext())
++            .setTitle(R.string.archive_delete_title)
++            .setMessage(getString(R.string.archive_delete_message, proverb))
++            .setNegativeButton(R.string.archive_cancel, null)
++            .setPositiveButton(R.string.archive_delete) { _, _ ->
++                viewModel.attempts.value
++                    ?.firstOrNull { it.id == attemptId }
++                    ?.let(viewModel::deleteAttempt)
++            }
++            .show()
++    }
++
++    private fun confirmClearAll() {
++        MaterialAlertDialogBuilder(requireContext())
++            .setTitle(R.string.archive_clear_title)
++            .setMessage(R.string.archive_clear_message)
++            .setNegativeButton(R.string.archive_cancel, null)
++            .setPositiveButton(R.string.archive_clear_all) { _, _ -> viewModel.clearArchive() }
++            .show()
++    }
++
++    override fun onDestroyView() {
++        super.onDestroyView()
++        _binding = null
++    }
++}
+diff --git a/app/src/main/java/com/example/mizizi/ui/home/HomeFragment.kt b/app/src/main/java/com/example/mizizi/ui/home/HomeFragment.kt
+index f1d6ddb..551297d 100644
+--- a/app/src/main/java/com/example/mizizi/ui/home/HomeFragment.kt
++++ b/app/src/main/java/com/example/mizizi/ui/home/HomeFragment.kt
+@@ -50,7 +50,9 @@ class HomeFragment : Fragment() {
+         binding.startPracticeButton.setOnClickListener {
+             findNavController().navigate(R.id.action_homeFragment_to_practiceFragment)
+         }
+-        binding.archiveButton.setOnClickListener { notYet("The archive") }
++        binding.archiveButton.setOnClickListener {
++            findNavController().navigate(R.id.action_homeFragment_to_archiveFragment)
++        }
+         binding.dailyProverbButton.setOnClickListener { notYet("The daily proverb") }
+     }
+ 
+diff --git a/app/src/main/res/layout/fragment_archive.xml b/app/src/main/res/layout/fragment_archive.xml
+new file mode 100644
+index 0000000..264c458
+--- /dev/null
++++ b/app/src/main/res/layout/fragment_archive.xml
+@@ -0,0 +1,72 @@
++<?xml version="1.0" encoding="utf-8"?>
++<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    android:background="@color/sand_background"
++    android:orientation="vertical"
++    android:padding="20dp">
++
++    <TextView
++        android:id="@+id/archiveCountText"
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:textColor="@color/ink_muted"
++        android:textSize="15sp"
++        tools:text="12 attempts recorded" />
++
++    <FrameLayout
++        android:layout_width="match_parent"
++        android:layout_height="0dp"
++        android:layout_marginTop="12dp"
++        android:layout_weight="1">
++
++        <androidx.recyclerview.widget.RecyclerView
++            android:id="@+id/archiveRecyclerView"
++            android:layout_width="match_parent"
++            android:layout_height="match_parent"
++            android:clipToPadding="false"
++            android:paddingBottom="12dp"
++            tools:listitem="@layout/item_attempt" />
++
++        <LinearLayout
++            android:id="@+id/emptyStateGroup"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_gravity="center"
++            android:gravity="center"
++            android:orientation="vertical"
++            android:visibility="gone"
++            tools:visibility="visible">
++
++            <TextView
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
++                android:gravity="center"
++                android:text="@string/archive_empty_title"
++                android:textColor="@color/ink"
++                android:textSize="18sp"
++                android:textStyle="bold" />
++
++            <TextView
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
++                android:layout_marginTop="6dp"
++                android:gravity="center"
++                android:text="@string/archive_empty_body"
++                android:textColor="@color/ink_muted"
++                android:textSize="15sp" />
++
++        </LinearLayout>
++
++    </FrameLayout>
++
++    <com.google.android.material.button.MaterialButton
++        android:id="@+id/clearArchiveButton"
++        style="@style/Widget.Material3.Button.TextButton"
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:text="@string/archive_clear_all"
++        android:textColor="@color/ink_muted" />
++
++</LinearLayout>
+diff --git a/app/src/main/res/layout/item_attempt.xml b/app/src/main/res/layout/item_attempt.xml
+new file mode 100644
+index 0000000..38a9717
+--- /dev/null
++++ b/app/src/main/res/layout/item_attempt.xml
+@@ -0,0 +1,65 @@
++<?xml version="1.0" encoding="utf-8"?>
++<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="wrap_content"
++    android:layout_marginBottom="10dp"
++    app:cardCornerRadius="14dp"
++    app:cardElevation="0dp">
++
++    <LinearLayout
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:orientation="vertical"
++        android:padding="16dp">
++
++        <TextView
++            android:id="@+id/originalText"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:textColor="@color/ink"
++            android:textSize="17sp"
++            android:textStyle="bold"
++            tools:text="Haraka haraka haina baraka" />
++
++        <TextView
++            android:id="@+id/answerText"
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="6dp"
++            android:textColor="@color/ink_muted"
++            android:textSize="15sp"
++            tools:text="Your answer: hurry hurry has no blessing" />
++
++        <LinearLayout
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:layout_marginTop="10dp"
++            android:gravity="center_vertical"
++            android:orientation="horizontal">
++
++            <TextView
++                android:id="@+id/gradeText"
++                android:layout_width="0dp"
++                android:layout_height="wrap_content"
++                android:layout_weight="1"
++                android:textColor="@color/green_primary"
++                android:textSize="14sp"
++                android:textStyle="bold"
++                tools:text="Correct, 14 Nov 2026 09:12" />
++
++            <com.google.android.material.button.MaterialButton
++                android:id="@+id/deleteButton"
++                style="@style/Widget.Material3.Button.TextButton"
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
++                android:minWidth="0dp"
++                android:text="@string/archive_delete"
++                android:textColor="@color/ink_muted" />
++
++        </LinearLayout>
++
++    </LinearLayout>
++
++</com.google.android.material.card.MaterialCardView>
+diff --git a/app/src/main/res/navigation/nav_graph.xml b/app/src/main/res/navigation/nav_graph.xml
+index b9a925a..614bdc2 100644
+--- a/app/src/main/res/navigation/nav_graph.xml
++++ b/app/src/main/res/navigation/nav_graph.xml
+@@ -12,6 +12,10 @@
+         <action
+             android:id="@+id/action_homeFragment_to_practiceFragment"
+             app:destination="@id/practiceFragment" />
++
++        <action
++            android:id="@+id/action_homeFragment_to_archiveFragment"
++            app:destination="@id/archiveFragment" />
+     </fragment>
+ 
+     <fragment
+@@ -49,4 +53,9 @@
+             app:argType="boolean" />
+     </fragment>
+ 
++    <fragment
++        android:id="@+id/archiveFragment"
++        android:name="com.example.mizizi.ui.archive.ArchiveFragment"
++        android:label="@string/title_archive" />
++
+ </navigation>
+diff --git a/app/src/main/res/values/strings.xml b/app/src/main/res/values/strings.xml
+index 766f30f..06cc92f 100644
+--- a/app/src/main/res/values/strings.xml
++++ b/app/src/main/res/values/strings.xml
+@@ -39,6 +39,18 @@
+     <string name="result_back_home">Back to home</string>
+     <string name="result_no_answer">You left this one blank.</string>
+ 
++    <string name="archive_your_answer">Your answer: %1$s</string>
++    <string name="archive_grade_and_date">%1$s, %2$s</string>
++    <string name="archive_delete">Delete</string>
++    <string name="archive_cancel">Cancel</string>
++    <string name="archive_clear_all">Clear the whole archive</string>
++    <string name="archive_empty_title">Nothing here yet</string>
++    <string name="archive_empty_body">Every attempt you make in a practice session is stored here.</string>
++    <string name="archive_delete_title">Delete this attempt?</string>
++    <string name="archive_delete_message">%1$s will be removed from your archive. This cannot be undone.</string>
++    <string name="archive_clear_title">Clear the archive?</string>
++    <string name="archive_clear_message">Every recorded attempt will be deleted. This cannot be undone.</string>
++
+     <plurals name="home_proverb_count">
+         <item quantity="one">%1$d proverb to practise</item>
+         <item quantity="other">%1$d proverbs to practise</item>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mizizi</string>
+    <string name="app_tagline">Keeping Kenyan languages usable for the next generation.</string>
+
+    <string name="title_home">Mizizi</string>
+    <string name="title_practice">Practice</string>
+    <string name="title_result">Your attempt</string>
+    <string name="title_archive">My archive</string>
+    <string name="title_editor">Proverb</string>
+    <string name="title_daily_proverb">Proverb of the day</string>
+
+    <string name="home_start_practice">Start a practice session</string>
+    <string name="home_open_archive">View my archive</string>
+    <string name="home_daily_proverb">Proverb of the day</string>
+    <string name="home_empty_state">No proverbs yet. Add your own and they show up here.</string>
+    <string name="screen_coming_soon">%1$s arrives in the next slice.</string>
+
+    <string name="practice_counter">Proverb %1$d of %2$d</string>
+    <string name="practice_no_proverbs">No proverbs to practise yet</string>
+    <string name="practice_score">Score %1$d</string>
+    <string name="practice_prompt">Translate the proverb into English. The feedback is based on meaning, not exact wording.</string>
+    <string name="practice_answer_hint">Your translation</string>
+    <string name="practice_submit">Check my answer</string>
+    <string name="practice_hint">Show machine translation</string>
+    <string name="practice_hint_loading">Asking the translation service...</string>
+    <string name="practice_hint_result">Machine literal: %1$s</string>
+    <string name="practice_next">Next proverb</string>
+    <string name="practice_restart">Start another session</string>
+    <string name="practice_summary">Session complete. You scored %1$d out of %2$d.</string>
+    <string name="practice_matched_keywords">Meaning words matched: %1$s</string>
+    <string name="practice_no_keywords">No meaning words matched this time.</string>
+    <string name="practice_full_feedback">See full feedback</string>
+
+    <string name="result_your_answer">Your answer</string>
+    <string name="result_meaning">What it means</string>
+    <string name="result_machine_label">Machine literal translation, for comparison</string>
+    <string name="result_continue">Back to the question</string>
+    <string name="result_back_home">Back to home</string>
+    <string name="result_no_answer">You left this one blank.</string>
+
+    <string name="archive_your_answer">Your answer: %1$s</string>
+    <string name="archive_grade_and_date">%1$s, %2$s</string>
+    <string name="archive_delete">Delete</string>
+    <string name="archive_cancel">Cancel</string>
+    <string name="archive_clear_all">Clear the whole archive</string>
+    <string name="archive_empty_title">Nothing here yet</string>
+    <string name="archive_empty_body">Every attempt you make in a practice session is stored here.</string>
+    <string name="archive_delete_title">Delete this attempt?</string>
+    <string name="archive_delete_message">%1$s will be removed from your archive. This cannot be undone.</string>
+    <string name="archive_clear_title">Clear the archive?</string>
+    <string name="archive_clear_message">Every recorded attempt will be deleted. This cannot be undone.</string>
+
+    <string name="home_add_proverb">Add a proverb</string>
+    <string name="editor_title_add">Add a proverb</string>
+    <string name="editor_title_edit">Edit proverb</string>
+    <string name="editor_original_hint">Proverb in the original language</string>
+    <string name="editor_meaning_hint">Meaning or English translation</string>
+    <string name="editor_keywords_hint">Meaning words</string>
+    <string name="editor_keywords_helper">Comma separated, e.g. haste, hurry, waste</string>
+    <string name="editor_save">Save proverb</string>
+    <string name="editor_delete">Delete this proverb</string>
+    <string name="editor_saved">Proverb saved</string>
+    <string name="editor_delete_title">Delete this proverb?</string>
+    <string name="editor_delete_message">%1$s will be removed from your collection.</string>
+
+    <string name="daily_heading">Proverb of the day</string>
+    <string name="daily_enable_reminder">Turn on the daily reminder</string>
+    <string name="daily_another">Show me another</string>
+    <string name="daily_reminder_on">Daily reminder: on</string>
+    <string name="daily_reminder_off">Daily reminder: off</string>
+
+    <plurals name="home_proverb_count">
+        <item quantity="one">%1$d proverb to practise</item>
+        <item quantity="other">%1$d proverbs to practise</item>
+    </plurals>
+
+    <plurals name="home_attempt_count">
+        <item quantity="one">%1$d attempt recorded</item>
+        <item quantity="other">%1$d attempts recorded</item>
+    </plurals>
+</resources>

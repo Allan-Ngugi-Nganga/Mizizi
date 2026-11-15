@@ -15,6 +15,11 @@ local.properties
 *.apk
 captures/
 
+# Signing material: never commit the keystore or its passwords
+keystore.properties
+*.jks
+*.keystore
+
 # OS junk
 .DS_Store
 Thumbs.db
