@@ -53,6 +53,9 @@ class HomeFragment : Fragment() {
         binding.archiveButton.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_archiveFragment)
         }
+        binding.addProverbButton.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_proverbEditorFragment)
+        }
         binding.dailyProverbButton.setOnClickListener { notYet("The daily proverb") }
     }
 

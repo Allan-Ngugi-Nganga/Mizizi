@@ -96,6 +96,17 @@
             android:textSize="16sp" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/addProverbButton"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:text="@string/home_add_proverb"
+            android:textSize="16sp" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/dailyProverbButton"
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="match_parent"

@@ -16,6 +16,10 @@
         <action
             android:id="@+id/action_homeFragment_to_archiveFragment"
             app:destination="@id/archiveFragment" />
+
+        <action
+            android:id="@+id/action_homeFragment_to_proverbEditorFragment"
+            app:destination="@id/proverbEditorFragment" />
     </fragment>
 
     <fragment
@@ -57,5 +61,16 @@
         android:id="@+id/archiveFragment"
         android:name="com.example.mizizi.ui.archive.ArchiveFragment"
         android:label="@string/title_archive" />
+
+    <fragment
+        android:id="@+id/proverbEditorFragment"
+        android:name="com.example.mizizi.ui.editor.ProverbEditorFragment"
+        android:label="@string/title_editor">
+
+        <argument
+            android:name="proverbId"
+            android:defaultValue="-1L"
+            app:argType="long" />
+    </fragment>
 
 </navigation>

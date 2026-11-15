@@ -51,6 +51,19 @@
     <string name="archive_clear_title">Clear the archive?</string>
     <string name="archive_clear_message">Every recorded attempt will be deleted. This cannot be undone.</string>
 
+    <string name="home_add_proverb">Add a proverb</string>
+    <string name="editor_title_add">Add a proverb</string>
+    <string name="editor_title_edit">Edit proverb</string>
+    <string name="editor_original_hint">Proverb in the original language</string>
+    <string name="editor_meaning_hint">Meaning or English translation</string>
+    <string name="editor_keywords_hint">Meaning words</string>
+    <string name="editor_keywords_helper">Comma separated, e.g. haste, hurry, waste</string>
+    <string name="editor_save">Save proverb</string>
+    <string name="editor_delete">Delete this proverb</string>
+    <string name="editor_saved">Proverb saved</string>
+    <string name="editor_delete_title">Delete this proverb?</string>
+    <string name="editor_delete_message">%1$s will be removed from your collection.</string>
+
     <plurals name="home_proverb_count">
         <item quantity="one">%1$d proverb to practise</item>
         <item quantity="other">%1$d proverbs to practise</item>
