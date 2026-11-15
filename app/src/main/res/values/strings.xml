@@ -1,5 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Mizizi</string>
-    <string name="scaffold_message">Mizizi\nKeeping Kenyan languages usable for the next generation.</string>
+    <string name="app_tagline">Keeping Kenyan languages usable for the next generation.</string>
+
+    <string name="title_home">Mizizi</string>
+    <string name="title_practice">Practice</string>
+    <string name="title_result">Your attempt</string>
+    <string name="title_archive">My archive</string>
+    <string name="title_editor">Proverb</string>
+    <string name="title_daily_proverb">Proverb of the day</string>
+
+    <string name="home_start_practice">Start a practice session</string>
+    <string name="home_open_archive">View my archive</string>
+    <string name="home_daily_proverb">Proverb of the day</string>
+    <string name="home_empty_state">No proverbs yet. Add your own and they show up here.</string>
+    <string name="screen_coming_soon">%1$s arrives in the next slice.</string>
+
+    <plurals name="home_proverb_count">
+        <item quantity="one">%1$d proverb to practise</item>
+        <item quantity="other">%1$d proverbs to practise</item>
+    </plurals>
+
+    <plurals name="home_attempt_count">
+        <item quantity="one">%1$d attempt recorded</item>
+        <item quantity="other">%1$d attempts recorded</item>
+    </plurals>
 </resources>
