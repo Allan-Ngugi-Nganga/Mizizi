@@ -51,7 +51,10 @@ git log -1 --format='%an <%ae>'
 | File | Slice | Owner |
 |---|---|---|
 | `02-practice-screen.patch` | Practice screen and the nav action from Home | Ziki Mtula |
+| `03-result-screen.patch` | Result screen with Safe Args, machine translation card, and the "See full feedback" button on the practice card | Michael Asingwire |
 
 Patches are numbered in the order they should land, because each one adds a
-destination to `res/navigation/nav_graph.xml`. If git reports a conflict on
-that file, keep both destinations: they are separate `<fragment>` blocks.
+destination to `res/navigation/nav_graph.xml` and 03 also edits the practice
+screen. Apply yours only after the earlier numbers are merged. If git reports
+a conflict on `nav_graph.xml`, keep both `<fragment>` blocks: they are separate
+destinations.
