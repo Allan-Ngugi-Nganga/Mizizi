@@ -64,6 +64,12 @@
     <string name="editor_delete_title">Delete this proverb?</string>
     <string name="editor_delete_message">%1$s will be removed from your collection.</string>
 
+    <string name="daily_heading">Proverb of the day</string>
+    <string name="daily_enable_reminder">Turn on the daily reminder</string>
+    <string name="daily_another">Show me another</string>
+    <string name="daily_reminder_on">Daily reminder: on</string>
+    <string name="daily_reminder_off">Daily reminder: off</string>
+
     <plurals name="home_proverb_count">
         <item quantity="one">%1$d proverb to practise</item>
         <item quantity="other">%1$d proverbs to practise</item>

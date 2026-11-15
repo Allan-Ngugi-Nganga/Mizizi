@@ -20,6 +20,10 @@
         <action
             android:id="@+id/action_homeFragment_to_proverbEditorFragment"
             app:destination="@id/proverbEditorFragment" />
+
+        <action
+            android:id="@+id/action_homeFragment_to_dailyProverbFragment"
+            app:destination="@id/dailyProverbFragment" />
     </fragment>
 
     <fragment
@@ -72,5 +76,10 @@
             android:defaultValue="-1L"
             app:argType="long" />
     </fragment>
+
+    <fragment
+        android:id="@+id/dailyProverbFragment"
+        android:name="com.example.mizizi.ui.daily.DailyProverbFragment"
+        android:label="@string/title_daily_proverb" />
 
 </navigation>

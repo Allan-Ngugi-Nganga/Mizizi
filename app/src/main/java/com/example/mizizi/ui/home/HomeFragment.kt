@@ -56,7 +56,9 @@ class HomeFragment : Fragment() {
         binding.addProverbButton.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_proverbEditorFragment)
         }
-        binding.dailyProverbButton.setOnClickListener { notYet("The daily proverb") }
+        binding.dailyProverbButton.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_dailyProverbFragment)
+        }
     }
 
     /** Placeholder until each screen lands in its own slice. */
