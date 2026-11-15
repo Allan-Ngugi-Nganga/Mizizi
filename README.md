@@ -6,7 +6,7 @@
   <a href="#current-status">Current Status</a> ·
   <a href="#repository-structure">Repository Structure</a> ·
   <a href="#branching-rules">Branching Rules</a> ·
-  <a href="#ci--checks">CI & Checks</a> ·
+  <a href="#checks">Checks</a> ·
   <a href="#how-to-run-lab-1">How to Run</a> ·
   <a href="#team">Team</a> ·
   <a href="#concept-note">Concept Note</a>
@@ -61,17 +61,22 @@ Keep commits **small and frequent** (one commit = one logical change).
 Push at least once a day: frequent small commits make bugs easy to trace
 and let the whole team follow updates as they happen.
 
-## CI & Checks
+## Checks
 
-Every push and pull request to `main` / `develop` runs GitHub Actions:
+CI is paused while the project moves to the Android app, and the Gradle build
+will bring its own checks back when the app scaffold lands. Until then, check
+your work locally before you open a pull request:
 
-- **Compile:** `Main.kt` is built with the official Kotlin compiler.
-- **Smoke test:** the app runs through the archive, daily-proverb and exit
-  flows and the output is verified.
+```bash
+kotlinc Main.kt -include-runtime -d mizizi.jar
+java -jar mizizi.jar
+```
+
+Walk the practice session, the archive and the daily proverb before you push.
 
 `main` is protected: code lands only through a pull request with at least one
-approving review and a green build. No direct pushes, no force-pushes.
-See `.github/workflows/build.yml` and `.github/PULL_REQUEST_TEMPLATE.md`.
+approving review. No direct pushes, no force-pushes. See
+`.github/PULL_REQUEST_TEMPLATE.md`.
 
 ## How to run (Lab 1)
 
