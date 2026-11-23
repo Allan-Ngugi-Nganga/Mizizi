@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mizizi — Group 1 Presentation & Defence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text-title: #0f172a;
+      --text-body: #334155;
+      --text-muted: #64748b;
+      --brand-green: #166534;
+      --brand-green-bg: #f0fdf4;
+      --brand-green-border: #bbf7d0;
+      --brand-accent: #c2410c;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background: #0f172a;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text-body);
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+
+    /* 16:9 Presentation Stage */
+    .deck-viewport {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0f172a;
+    }
+
+    .slide {
+      width: 100vw;
+      max-width: 1333px;
+      height: 100vh;
+      max-height: 750px;
+      aspect-ratio: 16 / 9;
+      background: var(--bg);
+      border-radius: 16px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.4);
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 56px 80px 44px 80px;
+      position: relative;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    /* Typography Hierarchy */
+    .slide-header {
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--brand-green);
+      margin-bottom: 8px;
+    }
+
+    .title {
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      color: var(--text-title);
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* Vertically Balanced Content Center */
+    .slide-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 0;
+    }
+
+    /* Symmetrical Grids with Balanced Heights */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+      align-items: stretch;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .grid-split {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    /* Symmetrical Proportional Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 30px 28px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.04);
+    }
+
+    .card.highlight {
+      background: var(--brand-green-bg);
+      border-color: var(--brand-green-border);
+    }
+
+    .card .num-badge {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--brand-green);
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 12px;
+      line-height: 1;
+    }
+
+    .card h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-title);
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+
+    .card p {
+      font-size: 15.5px;
+      line-height: 1.6;
+      color: var(--text-body);
+    }
+
+    .card ul {
+      list-style: none;
+      margin-top: 6px;
+    }
+
+    .card ul li {
+      position: relative;
+      padding-left: 18px;
+      margin-bottom: 10px;
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--text-body);
+    }
+
+    .card ul li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--brand-green);
+      font-size: 18px;
+      line-height: 1;
+      top: 1px;
+    }
+
+    /* Diagram Presentation Viewport */
+    .diagram-frame {
+      width: 100%;
+      height: 480px;
+      background: #0f172a;
+      border-radius: 14px;
+      border: 1px solid #334155;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .diagram-frame img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    /* Device Mockups Container */
+    .mockups-row {
+      display: flex;
+      gap: 18px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .mockup-img {
+      height: 420px;
+      border-radius: 20px;
+      border: 4px solid #0f172a;
+      box-shadow: 0 16px 32px rgba(15, 23, 42, 0.15);
+      display: block;
+    }
+
+    /* Clean Footer */
+    .slide-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border);
+      padding-top: 18px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .slide-footer .counter {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: var(--text-title);
+      font-size: 14px;
+    }
+
+    /* Floating Navigation Controls */
+    .hud {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+      border-radius: 30px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      z-index: 100;
+    }
+
+    .hud-btn {
+      background: transparent;
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-title);
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: 6px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hud-btn:hover {
+      background: #f1f5f9;
+    }
+
+    /* Presenter Notes Drawer */
+    .notes-panel {
+      position: fixed;
+      bottom: 78px;
+      right: 32px;
+      width: 420px;
+      max-height: 440px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.18);
+      padding: 22px;
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .notes-panel.open {
+      display: flex;
+    }
+
+    @media print {
+      body {
+        overflow: visible;
+        height: auto;
+        background: white;
+      }
+
+      .hud,
+      .notes-panel {
+        display: none !important;
+      }
+
+      .deck-viewport {
+        display: block;
+      }
+
+      .slide {
+        display: flex !important;
+        page-break-after: always;
+        break-after: page;
+        width: 100vw;
+        height: 100vh;
+        max-width: none;
+        max-height: none;
+        box-shadow: none;
+        border: none;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="deck-viewport">
+
+    <!-- SLIDE 1: COVER -->
+    <section class="slide active"
+      data-notes="Welcome examiners and students. We are Group 1 presenting Mizizi, an active-practice Android companion designed to stop mother tongue language attrition through meaning-based feedback.">
+      <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+        <div class="eyebrow">COURSE 3.2C MOBILE DEVELOPMENT • FINAL PRESENTATION & DEFENCE</div>
+        <h1 class="title" style="font-size: 54px; margin-bottom: 12px;">Mizizi: Language Practice App</h1>
+        <p class="subtitle" style="font-size: 22px; max-width: 880px; margin-bottom: 40px;">
+          Keeping Kenyan languages usable for the next generation through meaning-based active practice.
+        </p>
+
+        <div class="card" style="padding: 28px 32px;">
+          <div
+            style="font-size: 13px; font-weight: 700; color: var(--brand-green); margin-bottom: 12px; text-transform: uppercase;">
+            Group 1 Engineering Team & Module Ownership
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px; line-height: 1.6;">
+            <div>• <strong>Allan Ngugi (191250)</strong>: Architecture, Room DB, Repository, ViewModel</div>
+            <div>• <strong>Ziki Mtula (192992)</strong>: Practice Flow, Question Counter, Live Scoring</div>
+            <div>• <strong>Michael Asingwire (192483)</strong>: Result Screen, Safe Args, Keyword Matching</div>
+            <div>• <strong>Kelly Wambui (190500)</strong>: Archive Screen, RecyclerView with DiffUtil, Delete</div>
+            <div>• <strong>Daniella Thande (152581)</strong>: Proverb Editor, Dual-mode Form, Input Validation</div>
+            <div>• <strong>Evelyn Mwangi (190051)</strong>: Daily Proverb, MyMemory API, WorkManager</div>
+            <div>• <strong>Daniel Karanja (180761)</strong>: Documentation, Screenshots, Signed Release</div>
+            <div style="color: var(--brand-green); font-weight: 700;">• Platform: Android 7.0+ (API 24+) • Kotlin 1.9
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <span>Group 1 • Strathmore University</span>
+        <span class="counter">01 / 12</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 2: PART 1 - THE PROBLEM -->
+    <section class="slide"
+      data-notes="Urban youth have receptive fluency: they understand when spoken to, but lack expressive confidence. Generic machine translators fail on African proverbs because they translate literally. And elders aren't always available to correct mistakes.">
+      <div class="slide-header">
+        <div class="eyebrow">Part 1 — Problem</div>
+        <h2 class="title">The Problem: Passive Fluency & Language Attrition</h2>
+        <p class="subtitle">Young urban Kenyans understand their mother tongue conversationally, but lack confidence to
+          write, translate, or speak it.</p>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-3">
+          <div class="card">
+            <div class="num-badge">01</div>
+            <h3>The Receptive Gap</h3>
+            <p>Young Kenyans understand conversational speech when spoken to by elders, but freeze when asked to
+              construct sentences or translate proverbs actively. Without active practice, confidence never develops.
+            </p>
+          </div>
+          <div class="card">
+            <div class="num-badge">02</div>
+            <h3>Literal Machine Failure</h3>
+            <p>Generic translation tools (e.g. Google Translate) translate word-for-word. For African proverbs
+              (methali), literal machine translation strips the philosophical lesson, metaphor, and moral context
+              entirely.</p>
+          </div>
+          <div class="card">
+            <div class="num-badge">03</div>
+            <h3>The Feedback Void</h3>
+            <p>Native elders and relatives are not always on hand to review daily practice. Static reference books offer
+              zero feedback on a learner's own attempts, leaving mistakes uncorrected.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <span>Part 1 • Problem Analysis</span>
+        <span class="counter">02 / 12</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: PART 1 - TARGET USERS & WHY IT MATTERS -->
+    <section class="slide"
+      data-notes="We target 18-35 urban youth who communicate in Sheng and English, and young urban parents teaching their children. Proverbs carry cultural philosophy; active retrieval practice produces 50% higher memory retention than passive lookup.">
+      <div class="slide-header">
+        <div class="eyebrow">Part 1 — Audience & Significance</div>
+        <h2 class="title">Target Users & Why the Problem Matters</h2>
+        <p class="subtitle">Empowering urban youth and young parents while preserving indigenous cultural heritage.</p>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card">
+            <h3 style="color: var(--brand-green); font-size: 22px; margin-bottom: 16px;">Target Users</h3>
+            <p style="font-size: 15.5px; margin-bottom: 18px;">
+              <strong>• Urban Youth & Professionals (18–35):</strong><br>
+              Living in Nairobi, Kisumu, and Mombasa. Communicate predominantly in English and Sheng in school and work,
+              but want a private, judgment-free space to rebuild mother-tongue fluency.
+            </p>
+            <p style="font-size: 15.5px;">
+              <strong>• Young Urban Parents:</strong><br>
+              Parents raising children in metropolitan homes who want to teach authentic indigenous idioms and moral
+              sayings, but need an authoritative reference to verify correct meanings themselves.
+            </p>
+          </div>
+
+          <div class="card highlight">
+            <h3 style="color: var(--brand-green); font-size: 22px; margin-bottom: 16px;">Why It Matters</h3>
+            <p style="font-size: 15.5px; margin-bottom: 18px;">
+              <strong>• Cultural Heritage Preservation:</strong><br>
+              Proverbs (methali) carry centuries of legal, philosophical, and ethical wisdom. If young generations lose
+              the ability to understand them, centuries of cultural identity erode.
+            </p>
+            <p style="font-size: 15.5px;">
+              <strong>• Active Recall vs. Passive Reading:</strong><br>
+              Educational cognitive research shows that active practice (attempting to translate and getting feedback)
+              creates 50%+ stronger memory retention than simply reading passive word lists.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <span>Part 1 • User Personas & Value</span>
+        <span class="counter">03 / 12</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: PART 2 - PROPOSED SOLUTION -->
+    <section class="slide"
+      data-notes="Mizizi is an active translation companion. Users actively formulate their interpretation, the app grades meaning keywords, and shows the machine translation contrast alongside a daily habit reminder.">
+      <div class="slide-header">
+        <div class="eyebrow">Part 2 — Proposed Solution</div>
+        <h2 class="title">Mizizi: Meaning-Based Active Translation Companion</h2>
+        <p class="subtitle">Active translation practice, semantic keyword grading, and automated daily habit formation.
+        </p>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-split">
+          <div class="card" style="padding: 26px 28px;">
+            <h3 style="color: var(--brand-green); font-size: 20px; margin-bottom: 14px;">How Mizizi Solves the Problem
+            </h3>
+            <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14.5px;">
+              <div>
+                <strong>1. Active Translation Engine:</strong><br>
+                <span style="color: var(--text-body);">Users translate proverbs in their own words rather than passively
+                  reading answers. Live score tracking measures progress.</span>
+              </div>
+              <div>
+                <strong>2. Meaning-Based Grading:</strong><br>
+                <span style="color: var(--text-body);">Evaluates attempts based on concept keywords rather than exact
+                  text matching, providing feedback: Correct, Close, or Incorrect.</span>
+              </div>
+              <div>
+                <strong>3. Machine Translation Contrast:</strong><br>
+                <span style="color: var(--text-body);">Calls the MyMemory API to show the literal machine translation
+                  side-by-side, exposing why literal translation fails in African proverbs.</span>
+              </div>
+              <div>
+                <strong>4. Daily Habit Loop:</strong><br>
+                <span style="color: var(--text-body);">Uses WorkManager to schedule daily notifications, turning
+                  occasional curiosity into a consistent 2-minute daily learning habit.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mockups-row">
+            <img src="screenshots/practice.png" class="mockup-img" alt="Practice Screen">
+            <img src="screenshots/result.png" class="mockup-img" alt="Result Screen">
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <span>Part 2 • Solution Architecture</span>
+        <span class="counter">04 / 12</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: PART 2 - MAIN FEATURES -->
+    <section class="slide"
+      data-notes="Mizizi has four core pillars: the interactive practice engine with scoring, the semantic result breakdown, the personal archive with SQLite persistence, and the custom proverb editor for full CRUD.">
+      <div class="slide-header">
+        <div class="eyebrow">Part 2 — Core Features</div>
+        <h2 class="title">The Five Functional Pillars of Mizizi</h2>
+        <p class="subtitle">Complete user journeys designed for daily practice, review, authoring, and reminders.</p>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-4">
+          <div class="card">
+            <div class="eyebrow" style="font-size: 12px;">Pillar 01</div>
+            <h3>Practice Engine</h3>
+            <ul>
+              <li>5-question sessions</li>
+              <li>Live question counter</li>
+              <li>Dynamic score tracking</li>
+              <li>Optional hint request</li>
+              <li>Instant feedback badge</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="eyebrow" style="font-size: 12px;">Pillar 02</div>
+            <h3>Semantic Results</h3>
+            <ul>
+              <li>Tiered grading tiers</li>
+              <li>Shows user attempt</li>
+              <li>Displays true meaning</li>
+              <li>Matched keywords tag</li>
+              <li>MyMemory API card</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="eyebrow" style="font-size: 12px;">Pillar 03</div>
+            <h3>Personal Archive</h3>
+            <ul>
+              <li>Logged newest first</li>
+              <li>RecyclerView + DiffUtil</li>
+              <li>Exact grade & timestamp</li>
+              <li>Item-level deletion</li>
+              <li>Clear-all with dialog</li>
+            </ul>
+          </div>
+          <div class="card highlight">
+            <div class="eyebrow" style="font-size: 12px;">Pillar 04</div>
+            <h3>Proverb Editor</h3>
+            <ul>
+              <li>Add custom proverbs</li>
+              <li>Edit existing proverbs</li>
+              <li>Custom keywords input</li>
+              <li>Inline validation check</li>
+              <li>Delete proverb row</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <span>Part 2 • Feature Pillars</span>
+        <span class="counter">05 / 12</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: PART 3 - SYSTEM ARCHITECTURE DIAGRAM -->
+    <section class="slide"
+      data-notes="This diagram shows our complete system architecture: UI Fragments bind with ViewBinding and observe LiveData from MiziziViewModel. MiziziViewModel delegates business logic to SessionEngine and Grader, and routes data through MiziziRepository to Room SQLite and the MyMemory API.">
+      <div class="slide-header">
+        <div class="eyebrow">Part 3 — System Architecture</div>
+        <h2 class="title">System Architecture & Layering Diagram</h2>
+        <p class="subtitle">Clean separation of concerns: UI Layer, ViewModel Layer, Repository, and Data Layer.</p>
+      </div>
+
+      <div class="slide-body">
+        <div class="diagram-frame">
+          <img src="screenshots/architecture_diagram.png" alt="Mizizi System Architecture Diagram">
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <span>Part 3 • Architecture Diagram</span>
+        <span class="counter">06 / 12</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: PART 3 - ARCHITECTURAL COMPONENTS -->
+    <section class="slide"
+      data-notes="Each layer has one job. The UI layer has no idea Room exists. The ViewModel survives configuration changes via activityViewModels. The Repository is the single door to data. Room provides compile-time query safety.">
+      <div class="slide-header">
+        <div class="eyebrow">Part 3 — Architectural Responsibilities</div>
+        <h2 class="title">Layer Responsibilities: UI, ViewModel, Repository & Data</h2>
+        <p class="subtitle">Each component has exactly one well-defined responsibility under modern Android guidelines.
+        </p>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-4">
+          <div class="card">
+            <h3 style="color: var(--brand-green); font-size: 18px;">1. UI Layer</h3>
+            <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">Fragments +
+              ViewBinding</div>
+            <ul>
+              <li>HomeFragment</li>
+              <li>PracticeFragment</li>
+              <li>ResultFragment</li>
+              <li>ArchiveFragment</li>
+              <li>ProverbEditorFragment</li>
+              <li>Zero SQL or network calls</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3 style="color: var(--brand-green); font-size: 18px;">2. ViewModel</h3>
+            <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">
+              MiziziViewModel</div>
+            <ul>
+              <li>Activity-scoped lifecycle</li>
+              <li>Survives screen rotation</li>
+              <li>Owns SessionEngine</li>
+              <li>Validates proverb forms</li>
+              <li>Pure Kotlin Grader.kt</li>
+              <li>Exposes immutable LiveData</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3 style="color: var(--brand-green); font-size: 18px;">3. Repository</h3>
+            <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">
+              MiziziRepository</div>
+            <ul>
+              <li>Single door to data</li>
+              <li>Single Source of Truth</li>
+              <li>Hides database mechanics</li>
+              <li>Clean Coroutine API</li>
+              <li>Decouples UI from storage</li>
+            </ul>
+          </div>
+          <div class="card highlight">
+            <h3 style="color: var(--brand-green); font-size: 18px;">4. Data Layer</h3>
+            <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">Room SQLite &
+              APIs</div>
+            <ul>
+              <li>Room DB: mizizi.db</li>
+              <li>Proverb & Attempt DAOs</li>
+              <li>Pre-seeded in onCreate()</li>
+              <li>MyMemory API (HTTPS)</li>
+              <li>WorkManager Daily Worker</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <span>Part 3 • Component Breakdown</span>
+        <span class="counter">07 / 12</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: PART 3 - UNIDIRECTIONAL DATA FLOW -->
+    <section class="slide"
+      data-notes="When a user submits an answer, it travels through 4 clean stages: Fragment collects input, ViewModel executes the pure Kotlin Grader, Repository writes to Room asynchronously, and Room automatically invalidates its cache and pushes the updated LiveData to the UI.">
+      <div class="slide-header">
+        <div class="eyebrow">Part 3 — Unidirectional Data Flow</div>
+        <h2 class="title">Data Flow: Tracing an Answer from UI to SQLite</h2>
+        <p class="subtitle">Tracing an attempt: from touch event, through pure domain logic, into SQLite persistence.
+        </p>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-4">
+          <div class="card">
+            <div class="num-badge">01</div>
+            <h3>UI Event</h3>
+            <p style="font-size: 14.5px; margin-bottom: 8px;"><strong>User Submits Answer</strong></p>
+            <p style="font-size: 13.5px; color: var(--text-muted);">
+              • Types answer in PracticeFragment<br>
+              • Taps Submit button<br>
+              • Fragment calls:<br>
+              <code>viewModel.submitAnswer()</code><br>
+              • Zero database code in UI
+            </p>
+          </div>
+          <div class="card">
+            <div class="num-badge">02</div>
+            <h3>Business Logic</h3>
+            <p style="font-size: 14.5px; margin-bottom: 8px;"><strong>Pure Kotlin Grader</strong></p>
+            <p style="font-size: 13.5px; color: var(--text-muted);">
+              • Passes text to Grader.kt<br>
+              • Cleans casing & punctuation<br>
+              • Matches concept keywords<br>
+              • Dynamic pass mark check<br>
+              • Updates _outcome LiveData
+            </p>
+          </div>
+          <div class="card">
+            <div class="num-badge">03</div>
+            <h3>Repository</h3>
+            <p style="font-size: 14.5px; margin-bottom: 8px;"><strong>Async Room Write</strong></p>
+            <p style="font-size: 13.5px; color: var(--text-muted);">
+              • Launches on viewModelScope<br>
+              • repository.recordAttempt()<br>
+              • AttemptDao executes SQL on background thread:<br>
+              <code>INSERT INTO attempts...</code>
+            </p>
+          </div>
+          <div class="card highlight">
+            <div class="num-badge">04</div>
+            <h3>Reactive UI</h3>
+            <p style="font-size: 14.5px; margin-bottom: 8px;"><strong>LiveData Auto-Update</strong></p>
+            <p style="font-size: 13.5px; color: var(--text-muted);">
+              • Room detects table update<br>
+              • observeAll() re-emits list<br>
+              • Home & Archive refresh automatically<br>
+              • No manual polling required
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <span>Part 3 • Data Pipeline</span>
+        <span class="counter">08 / 12</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 9: PART 4 - LIVE DEMONSTRATION -->
+    <section class="slide"
+      data-notes="We now perform the live working demonstration on our device. We will walk through verifying seed data, completing a practice session, reviewing results, deleting an archive entry, editing a proverb with validation, and verifying the daily background worker.">
+      <div class="slide-header">
+        <div class="eyebrow">Part 4 — Application Demonstration</div>
+        <h2 class="title">Live Working Functionality Demonstration Guide</h2>
+        <p class="subtitle">Run live on physical device / emulator to demonstrate working functionality rather than
+          static screenshots.</p>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-split">
+          <div class="card" style="padding: 26px 28px;">
+            <h3 style="color: var(--brand-green); font-size: 18px; margin-bottom: 12px;">Demonstration Step-by-Step
+              Checklist</h3>
+            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13.5px;">
+              <div><strong>1. Seed Data & Counters:</strong> Confirm 8 pre-seeded proverbs from SQLite and 0 attempts on
+                Home.</div>
+              <div><strong>2. Practice Session:</strong> Translate proverb. Submit and show live score update and inline
+                feedback.</div>
+              <div><strong>3. Results & Machine Contrast:</strong> Inspect matched keywords badge and live MyMemory
+                machine translation card.</div>
+              <div><strong>4. Archive Verification:</strong> Show attempt history logged newest first with timestamps.
+                Delete one attempt to verify.</div>
+              <div><strong>5. Proverb Editor CRUD:</strong> Test validation with empty fields. Enter valid custom
+                proverb. Verify count is 9.</div>
+              <div><strong>6. WorkManager Reminder:</strong> Toggle daily reminder switch. Verify background worker
+                registration.</div>
+            </div>
+          </div>
+
+          <div class="mockups-row">
+            <img src="screenshots/editor.png" class="mockup-img" alt="Editor">
+            <img src="screenshots/notification.png" class="mockup-img" alt="Notification">
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <span>Part 4 • Live Execution</span>
+        <span class="counter">09 / 12</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 10: PART 5 - TECHNICAL DEFENCE (Q1 - Q4) -->
+    <section class="slide"
+      data-notes="Questions 1 to 4: Architecture chosen for lifecycle stability; Room chosen for compile-time query verification; CRUD works through clean DAO methods; and validation is enforced in the ViewModel so invalid data never touches Room.">
+      <div class="slide-header">
+        <div class="eyebrow">Part 5 — Technical Defence (Q1 – Q4)</div>
+        <h2 class="title">Architecture, Database, CRUD & Validation</h2>
+        <p class="subtitle">Direct, simple technical answers backed by actual code implementation.</p>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-2x2">
+          <div class="card" style="padding: 20px 24px;">
+            <h3 style="color: var(--brand-green); font-size: 16px; margin-bottom: 8px;">Q1: Why did you choose this
+              architecture?</h3>
+            <p style="font-size: 13.5px; line-height: 1.55;">
+              • <strong>MVVM + Repository:</strong> Ensures strict separation of concerns.<br>
+              • <strong>Lifecycle Resilience:</strong> <code>MiziziViewModel</code> is scoped to
+              <code>activityViewModels()</code>, preserving active practice sessions and scores across screen
+              rotations.<br>
+              • <strong>Fast Unit Testing:</strong> <code>Grader.kt</code> is pure Kotlin, allowing 9 tests to run in
+              milliseconds without mocking Android dependencies.
+            </p>
+          </div>
+
+          <div class="card" style="padding: 20px 24px;">
+            <h3 style="color: var(--brand-green); font-size: 16px; margin-bottom: 8px;">Q2: Why did you choose this
+              database?</h3>
+            <p style="font-size: 13.5px; line-height: 1.55;">
+              • <strong>Room SQLite Safety:</strong> Verifies SQL queries at build time, preventing runtime SQL syntax
+              crashes.<br>
+              • <strong>Reactive LiveData:</strong> DAOs return LiveData streams that automatically update the UI when
+              tables change.<br>
+              • <strong>Safe First-Run Seeding:</strong> <code>onCreate()</code> executes seed SQL only once on initial
+              database file creation.
+            </p>
+          </div>
+
+          <div class="card" style="padding: 20px 24px;">
+            <h3 style="color: var(--brand-green); font-size: 16px; margin-bottom: 8px;">Q3: How does your CRUD
+              functionality work?</h3>
+            <p style="font-size: 13.5px; line-height: 1.55;">
+              • <strong>Create:</strong> <code>ProverbDao.insert()</code> with auto-increment ID and
+              <code>AttemptDao.insert()</code>.<br>
+              • <strong>Read:</strong> Reactive <code>observeAll()</code> queries returning LiveData to Home and
+              Archive.<br>
+              • <strong>Update:</strong> ProverbEditorFragment pre-fills entity fields and calls
+              <code>update()</code>.<br>
+              • <strong>Delete:</strong> Single deletion in editor; row deletion and bulk <code>clear()</code> in
+              Archive.
+            </p>
+          </div>
+
+          <div class="card" style="padding: 20px 24px;">
+            <h3 style="color: var(--brand-green); font-size: 16px; margin-bottom: 8px;">Q4: What happens on invalid
+              information?</h3>
+            <p style="font-size: 13.5px; line-height: 1.55;">
+              • <strong>Centralized Validation:</strong> <code>validateProverb()</code> enforces non-blank fields and a
+              minimum length of 6 characters.<br>
+              • <strong>UI Feedback:</strong> Emits <code>FormResult.Invalid(message)</code>, showing an inline red
+              error banner.<br>
+              • <strong>Grader Normalization:</strong> Strips punctuation; empty answers safely receive
+              <code>INCORRECT</code> without crashing.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <span>Part 5 • Technical Defence (1/2)</span>
+        <span class="counter">10 / 12</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 11: PART 5 - TECHNICAL DEFENCE (Q5 - Q8) -->
+    <section class="slide"
+      data-notes="Questions 5 to 8: Data moves unidirectionally with coroutines; API failures are safely caught with sealed ApiResult; WorkManager persists across device reboots; and future improvements focus on multi-vernacular audio and on-device NLP.">
+      <div class="slide-header">
+        <div class="eyebrow">Part 5 — Technical Defence (Q5 – Q8)</div>
+        <h2 class="title">Networking, Background Work & Roadmap</h2>
+        <p class="subtitle">Resilience patterns, background scheduling, and future engineering roadmap.</p>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-2x2">
+          <div class="card" style="padding: 20px 24px;">
+            <h3 style="color: var(--brand-green); font-size: 16px; margin-bottom: 8px;">Q5: How does data move from UI
+              to database?</h3>
+            <p style="font-size: 13.5px; line-height: 1.55;">
+              1. <strong>UI Event:</strong> Fragment collects user input and calls ViewModel.<br>
+              2. <strong>Coroutine Dispatch:</strong> ViewModel launches on <code>viewModelScope</code> (Main).<br>
+              3. <strong>Repository Delegation:</strong> Maps parameters to entity and calls DAO.<br>
+              4. <strong>Room Thread:</strong> Writes to SQLite asynchronously on background thread.<br>
+              5. <strong>LiveData Invalidation:</strong> Room triggers automatic LiveData update to UI.
+            </p>
+          </div>
+
+          <div class="card" style="padding: 20px 24px;">
+            <h3 style="color: var(--brand-green); font-size: 16px; margin-bottom: 8px;">Q6: What happens when the API is
+              unavailable?</h3>
+            <p style="font-size: 13.5px; line-height: 1.55;">
+              • <strong>Sealed ApiResult:</strong> Encapsulates network responses in Success or Error.<br>
+              • <strong>Strict Timeouts:</strong> <code>HttpURLConnection</code> enforces 8-second connect and read
+              timeouts.<br>
+              • <strong>Offline-First Design:</strong> Network failure shows a graceful error card; practice, grading,
+              and archive remain 100% operational offline.
+            </p>
+          </div>
+
+          <div class="card" style="padding: 20px 24px;">
+            <h3 style="color: var(--brand-green); font-size: 16px; margin-bottom: 8px;">Q7: Why did you use WorkManager?
+            </h3>
+            <p style="font-size: 13.5px; line-height: 1.55;">
+              • <strong>Guaranteed Persistence:</strong> Survives app process death and device reboots, unlike standard
+              Handlers or Timers.<br>
+              • <strong>Battery / Doze Mode:</strong> Daily notifications are deferrable; OS batches them.<br>
+              • <strong>Idempotent Policy:</strong> <code>ExistingPeriodicWorkPolicy.KEEP</code> (24h period) prevents
+              duplicate registered workers.
+            </p>
+          </div>
+
+          <div class="card highlight" style="padding: 20px 24px;">
+            <h3 style="color: var(--brand-green); font-size: 16px; margin-bottom: 8px;">Q8: What would you improve with
+              more dev time?</h3>
+            <p style="font-size: 13.5px; line-height: 1.55;">
+              1. <strong>Multi-Vernacular Support:</strong> Add Kikuyu, Dholuo, Luhya, Kalenjin, Kamba with native audio
+              pronunciation.<br>
+              2. <strong>On-Device NLP:</strong> Local TensorFlow Lite embeddings for deeper semantic similarity.<br>
+              3. <strong>Cloud Sync:</strong> Firebase Auth & Firestore for community-contributed proverbs.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <span>Part 5 • Technical Defence (2/2)</span>
+        <span class="counter">11 / 12</span>
+      </div>
+    </section>
+
+    <!-- SLIDE 12: CONCLUSION -->
+    <section class="slide"
+      data-notes="Every group member committed a distinct architectural slice. Our APK is release-ready with 9 unit tests passing. Thank you for your time, we welcome your questions.">
+      <div class="slide-header">
+        <div class="eyebrow">Conclusion & Verification</div>
+        <h2 class="title">Engineering Integrity & Release Verification</h2>
+        <p class="subtitle">Every member designed, implemented, and committed a distinct architectural slice.</p>
+      </div>
+
+      <div class="slide-body">
+        <div class="grid-split">
+          <div class="card" style="padding: 24px 28px;">
+            <div
+              style="font-size: 12px; font-weight: 700; color: var(--brand-green); text-transform: uppercase; margin-bottom: 10px;">
+              Individual Commit Slices</div>
+            <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px;">
+              <div>• <strong>Allan Ngugi (191250)</strong> [<code>423bece</code>]: Setup, Room DB, Repository,
+                ViewModel, Navigation</div>
+              <div>• <strong>Ziki Mtula (192992)</strong> [<code>2bed260</code>]: Practice screen question flow, answer
+                input, inline scoring</div>
+              <div>• <strong>Michael Asingwire (192483)</strong> [<code>e6c095a</code>]: Result screen, Safe Args,
+                keyword matching breakdown</div>
+              <div>• <strong>Kelly Wambui (190500)</strong> [<code>80c773c</code>]: Archive RecyclerView, DiffUtil
+                adapter, item deletion</div>
+              <div>• <strong>Daniella Thande (152581)</strong> [<code>b6ccdc3</code>]: Proverb editor dual-mode form,
+                validation logic</div>
+              <div>• <strong>Evelyn Mwangi (190051)</strong> [<code>c549827</code>]: Daily proverb, MyMemory HTTP
+                integration, WorkManager</div>
+              <div>• <strong>Daniel Karanja (180761)</strong> [<code>36a31b2</code>]: README, release checklist, signed
+                APK verification</div>
+            </div>
+          </div>
+
+          <div class="card highlight" style="justify-content: center; text-align: center; padding: 28px;">
+            <div
+              style="font-size: 12px; font-weight: 700; color: var(--brand-green); text-transform: uppercase; margin-bottom: 8px;">
+              Release Verification</div>
+            <div style="font-size: 26px; font-weight: 800; color: var(--text-title); margin-bottom: 12px;">v1.0.0
+              Release Ready</div>
+            <p style="font-size: 14px; color: var(--text-body); line-height: 1.6;">
+              • Signed production APK verified<br>
+              • 9/9 Gradle Unit Tests Passing<br>
+              • Tested on Android API 24+<br><br>
+              <strong>Thank you. We welcome your questions.</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-footer">
+        <span>Group 1 • Final Presentation & Defence</span>
+        <span class="counter">12 / 12</span>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Minimal Floating HUD -->
+  <nav class="hud">
+    <button class="hud-btn" onclick="prevSlide()" title="Previous slide (Left Arrow)">← Prev</button>
+    <span id="hud-counter" style="font-size: 13px; font-weight: 700; font-family: 'JetBrains Mono', monospace;">01 /
+      12</span>
+    <button class="hud-btn" onclick="nextSlide()" title="Next slide (Right Arrow / Space)">Next →</button>
+    <span style="color: #cbd5e1;">|</span>
+    <button class="hud-btn" onclick="toggleNotes()" id="notes-btn" title="Presenter Notes (Press S)">🎙️ Notes
+      (S)</button>
+    <button class="hud-btn" onclick="toggleFullscreen()" title="Fullscreen (Press F)">⛶ Fullscreen</button>
+    <a href="Mizizi_Presentation_Group_1.pptx" download class="hud-btn" style="color: var(--brand-green);"
+      title="Download PowerPoint">📥 PPTX</a>
+    <button class="hud-btn" onclick="window.print()" title="Print / PDF">🖨️ PDF</button>
+  </nav>
+
+  <!-- Presenter Notes Drawer -->
+  <aside class="notes-panel" id="notes-panel">
+    <div
+      style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
+      <span style="font-weight: 700; color: var(--brand-green); font-size: 11px; text-transform: uppercase;">Presenter
+        Talking Track</span>
+      <span id="timer"
+        style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-muted);">00:00</span>
+    </div>
+    <div id="notes-text" style="color: var(--text-body); overflow-y: auto;"></div>
+    <div style="font-size: 11px; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 8px;">
+      Tip: Press <kbd style="font-family: 'JetBrains Mono'; font-weight: 700;">S</kbd> to toggle • <kbd
+        style="font-family: 'JetBrains Mono'; font-weight: 700;">F</kbd> for fullscreen
+    </div>
+  </aside>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    let currentSlide = 0;
+    let timerSeconds = 0;
+
+    function showSlide(index) {
+      if (index < 0) index = 0;
+      if (index >= totalSlides) index = totalSlides - 1;
+
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === index);
+      });
+
+      currentSlide = index;
+      const numStr = String(index + 1).padStart(2, '0');
+      const totalStr = String(totalSlides).padStart(2, '0');
+      document.getElementById('hud-counter').textContent = `${numStr} / ${totalStr}`;
+
+      const notes = slides[index].getAttribute('data-notes') || 'No notes for this slide.';
+      document.getElementById('notes-text').textContent = notes;
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides - 1) showSlide(currentSlide + 1);
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) showSlide(currentSlide - 1);
+    }
+
+    function toggleNotes() {
+      const panel = document.getElementById('notes-panel');
+      panel.classList.toggle('open');
+      document.getElementById('notes-btn').style.color = panel.classList.contains('open') ? 'var(--brand-green)' : 'var(--text-title)';
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => { });
+      } else if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        showSlide(0);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        showSlide(totalSlides - 1);
+      } else if (e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        toggleNotes();
+      } else if (e.key.toLowerCase() === 'f') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    });
+
+    setInterval(() => {
+      timerSeconds++;
+      const m = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+      const s = String(timerSeconds % 60).padStart(2, '0');
+      document.getElementById('timer').textContent = `${m}:${s}`;
+    }, 1000);
+
+    showSlide(0);
+  </script>
+</body>
+
+</html>
