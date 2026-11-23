@@ -303,30 +303,6 @@
       background: #f1f5f9;
     }
 
-    /* Presenter Notes Drawer */
-    .notes-panel {
-      position: fixed;
-      bottom: 78px;
-      right: 32px;
-      width: 420px;
-      max-height: 440px;
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.18);
-      padding: 22px;
-      z-index: 200;
-      display: none;
-      flex-direction: column;
-      gap: 12px;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .notes-panel.open {
-      display: flex;
-    }
-
     @media print {
       body {
         overflow: visible;
@@ -334,8 +310,7 @@
         background: white;
       }
 
-      .hud,
-      .notes-panel {
+      .hud {
         display: none !important;
       }
 
@@ -364,8 +339,7 @@
   <div class="deck-viewport">
 
     <!-- SLIDE 1: COVER -->
-    <section class="slide active"
-      data-notes="Welcome examiners and students. We are Group 1 presenting Mizizi, an active-practice Android companion designed to stop mother tongue language attrition through meaning-based feedback.">
+    <section class="slide active">
       <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
         <div class="eyebrow">COURSE 3.2C MOBILE DEVELOPMENT • FINAL PRESENTATION & DEFENCE</div>
         <h1 class="title" style="font-size: 54px; margin-bottom: 12px;">Mizizi: Language Practice App</h1>
@@ -399,8 +373,7 @@
     </section>
 
     <!-- SLIDE 2: PART 1 - THE PROBLEM -->
-    <section class="slide"
-      data-notes="Urban youth have receptive fluency: they understand when spoken to, but lack expressive confidence. Generic machine translators fail on African proverbs because they translate literally. And elders aren't always available to correct mistakes.">
+    <section class="slide">
       <div class="slide-header">
         <div class="eyebrow">Part 1 — Problem</div>
         <h2 class="title">The Problem: Passive Fluency & Language Attrition</h2>
@@ -440,8 +413,7 @@
     </section>
 
     <!-- SLIDE 3: PART 1 - TARGET USERS & WHY IT MATTERS -->
-    <section class="slide"
-      data-notes="We target 18-35 urban youth who communicate in Sheng and English, and young urban parents teaching their children. Proverbs carry cultural philosophy; active retrieval practice produces 50% higher memory retention than passive lookup.">
+    <section class="slide">
       <div class="slide-header">
         <div class="eyebrow">Part 1 — Audience & Significance</div>
         <h2 class="title">Target Users & Why the Problem Matters</h2>
@@ -487,8 +459,7 @@
     </section>
 
     <!-- SLIDE 4: PART 2 - PROPOSED SOLUTION -->
-    <section class="slide"
-      data-notes="Mizizi is an active translation companion. Users actively formulate their interpretation, the app grades meaning keywords, and shows the machine translation contrast alongside a daily habit reminder.">
+    <section class="slide">
       <div class="slide-header">
         <div class="eyebrow">Part 2 — Proposed Solution</div>
         <h2 class="title">Mizizi: Meaning-Based Active Translation Companion</h2>
@@ -539,8 +510,7 @@
     </section>
 
     <!-- SLIDE 5: PART 2 - MAIN FEATURES -->
-    <section class="slide"
-      data-notes="Mizizi has four core pillars: the interactive practice engine with scoring, the semantic result breakdown, the personal archive with SQLite persistence, and the custom proverb editor for full CRUD.">
+    <section class="slide">
       <div class="slide-header">
         <div class="eyebrow">Part 2 — Core Features</div>
         <h2 class="title">The Five Functional Pillars of Mizizi</h2>
@@ -603,8 +573,7 @@
     </section>
 
     <!-- SLIDE 6: PART 3 - SYSTEM ARCHITECTURE DIAGRAM -->
-    <section class="slide"
-      data-notes="This diagram shows our complete system architecture: UI Fragments bind with ViewBinding and observe LiveData from MiziziViewModel. MiziziViewModel delegates business logic to SessionEngine and Grader, and routes data through MiziziRepository to Room SQLite and the MyMemory API.">
+    <section class="slide">
       <div class="slide-header">
         <div class="eyebrow">Part 3 — System Architecture</div>
         <h2 class="title">System Architecture & Layering Diagram</h2>
@@ -624,8 +593,7 @@
     </section>
 
     <!-- SLIDE 7: PART 3 - ARCHITECTURAL COMPONENTS -->
-    <section class="slide"
-      data-notes="Each layer has one job. The UI layer has no idea Room exists. The ViewModel survives configuration changes via activityViewModels. The Repository is the single door to data. Room provides compile-time query safety.">
+    <section class="slide">
       <div class="slide-header">
         <div class="eyebrow">Part 3 — Architectural Responsibilities</div>
         <h2 class="title">Layer Responsibilities: UI, ViewModel, Repository & Data</h2>
@@ -695,8 +663,7 @@
     </section>
 
     <!-- SLIDE 8: PART 3 - UNIDIRECTIONAL DATA FLOW -->
-    <section class="slide"
-      data-notes="When a user submits an answer, it travels through 4 clean stages: Fragment collects input, ViewModel executes the pure Kotlin Grader, Repository writes to Room asynchronously, and Room automatically invalidates its cache and pushes the updated LiveData to the UI.">
+    <section class="slide">
       <div class="slide-header">
         <div class="eyebrow">Part 3 — Unidirectional Data Flow</div>
         <h2 class="title">Data Flow: Tracing an Answer from UI to SQLite</h2>
@@ -762,8 +729,7 @@
     </section>
 
     <!-- SLIDE 9: PART 4 - LIVE DEMONSTRATION -->
-    <section class="slide"
-      data-notes="We now perform the live working demonstration on our device. We will walk through verifying seed data, completing a practice session, reviewing results, deleting an archive entry, editing a proverb with validation, and verifying the daily background worker.">
+    <section class="slide">
       <div class="slide-header">
         <div class="eyebrow">Part 4 — Application Demonstration</div>
         <h2 class="title">Live Working Functionality Demonstration Guide</h2>
@@ -806,8 +772,7 @@
     </section>
 
     <!-- SLIDE 10: PART 5 - TECHNICAL DEFENCE (Q1 - Q4) -->
-    <section class="slide"
-      data-notes="Questions 1 to 4: Architecture chosen for lifecycle stability; Room chosen for compile-time query verification; CRUD works through clean DAO methods; and validation is enforced in the ViewModel so invalid data never touches Room.">
+    <section class="slide">
       <div class="slide-header">
         <div class="eyebrow">Part 5 — Technical Defence (Q1 – Q4)</div>
         <h2 class="title">Architecture, Database, CRUD & Validation</h2>
@@ -879,8 +844,7 @@
     </section>
 
     <!-- SLIDE 11: PART 5 - TECHNICAL DEFENCE (Q5 - Q8) -->
-    <section class="slide"
-      data-notes="Questions 5 to 8: Data moves unidirectionally with coroutines; API failures are safely caught with sealed ApiResult; WorkManager persists across device reboots; and future improvements focus on multi-vernacular audio and on-device NLP.">
+    <section class="slide">
       <div class="slide-header">
         <div class="eyebrow">Part 5 — Technical Defence (Q5 – Q8)</div>
         <h2 class="title">Networking, Background Work & Roadmap</h2>
@@ -945,8 +909,7 @@
     </section>
 
     <!-- SLIDE 12: CONCLUSION -->
-    <section class="slide"
-      data-notes="Every group member committed a distinct architectural slice. Our APK is release-ready with 9 unit tests passing. Thank you for your time, we welcome your questions.">
+    <section class="slide">
       <div class="slide-header">
         <div class="eyebrow">Conclusion & Verification</div>
         <h2 class="title">Engineering Integrity & Release Verification</h2>
@@ -1004,39 +967,19 @@
   <!-- Minimal Floating HUD -->
   <nav class="hud">
     <button class="hud-btn" onclick="prevSlide()" title="Previous slide (Left Arrow)">← Prev</button>
-    <span id="hud-counter" style="font-size: 13px; font-weight: 700; font-family: 'JetBrains Mono', monospace;">01 /
-      12</span>
+    <span id="hud-counter" style="font-size: 13px; font-weight: 700; font-family: 'JetBrains Mono', monospace;">01 / 12</span>
     <button class="hud-btn" onclick="nextSlide()" title="Next slide (Right Arrow / Space)">Next →</button>
     <span style="color: #cbd5e1;">|</span>
-    <button class="hud-btn" onclick="toggleNotes()" id="notes-btn" title="Presenter Notes (Press S)">🎙️ Notes
-      (S)</button>
     <button class="hud-btn" onclick="toggleFullscreen()" title="Fullscreen (Press F)">⛶ Fullscreen</button>
     <a href="Mizizi_Presentation_Group_1.pptx" download class="hud-btn" style="color: var(--brand-green);"
       title="Download PowerPoint">📥 PPTX</a>
     <button class="hud-btn" onclick="window.print()" title="Print / PDF">🖨️ PDF</button>
   </nav>
 
-  <!-- Presenter Notes Drawer -->
-  <aside class="notes-panel" id="notes-panel">
-    <div
-      style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
-      <span style="font-weight: 700; color: var(--brand-green); font-size: 11px; text-transform: uppercase;">Presenter
-        Talking Track</span>
-      <span id="timer"
-        style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-muted);">00:00</span>
-    </div>
-    <div id="notes-text" style="color: var(--text-body); overflow-y: auto;"></div>
-    <div style="font-size: 11px; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 8px;">
-      Tip: Press <kbd style="font-family: 'JetBrains Mono'; font-weight: 700;">S</kbd> to toggle • <kbd
-        style="font-family: 'JetBrains Mono'; font-weight: 700;">F</kbd> for fullscreen
-    </div>
-  </aside>
-
   <script>
     const slides = document.querySelectorAll('.slide');
     const totalSlides = slides.length;
     let currentSlide = 0;
-    let timerSeconds = 0;
 
     function showSlide(index) {
       if (index < 0) index = 0;
@@ -1050,9 +993,6 @@
       const numStr = String(index + 1).padStart(2, '0');
       const totalStr = String(totalSlides).padStart(2, '0');
       document.getElementById('hud-counter').textContent = `${numStr} / ${totalStr}`;
-
-      const notes = slides[index].getAttribute('data-notes') || 'No notes for this slide.';
-      document.getElementById('notes-text').textContent = notes;
     }
 
     function nextSlide() {
@@ -1061,12 +1001,6 @@
 
     function prevSlide() {
       if (currentSlide > 0) showSlide(currentSlide - 1);
-    }
-
-    function toggleNotes() {
-      const panel = document.getElementById('notes-panel');
-      panel.classList.toggle('open');
-      document.getElementById('notes-btn').style.color = panel.classList.contains('open') ? 'var(--brand-green)' : 'var(--text-title)';
     }
 
     function toggleFullscreen() {
@@ -1090,21 +1024,11 @@
       } else if (e.key === 'End') {
         e.preventDefault();
         showSlide(totalSlides - 1);
-      } else if (e.key.toLowerCase() === 's') {
-        e.preventDefault();
-        toggleNotes();
       } else if (e.key.toLowerCase() === 'f') {
         e.preventDefault();
         toggleFullscreen();
       }
     });
-
-    setInterval(() => {
-      timerSeconds++;
-      const m = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
-      const s = String(timerSeconds % 60).padStart(2, '0');
-      document.getElementById('timer').textContent = `${m}:${s}`;
-    }, 1000);
 
     showSlide(0);
   </script>

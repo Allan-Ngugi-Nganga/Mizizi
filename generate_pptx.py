@@ -100,7 +100,7 @@ def add_footer(slide, current_slide, total_slides=12):
     p.font.color.rgb = TEXT_MUTED
 
 def add_notes(slide, notes):
-    slide.notes_slide.notes_text_frame.text = notes.strip()
+    pass
 
 # -----------------------------------------------------------------------------
 # SLIDE 1: COVER
